@@ -259,6 +259,19 @@
   }
   /* Si hay un número impar de cerraduras, la última va centrada */
   .cerradura:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 9px); }
+  /* Anillo de progreso: se va llenando con cada llave de la asignatura */
+  .cerradura:not(.abierta) {
+    border-color: transparent;
+    background:
+      radial-gradient(circle closest-side, #1c1229 78%, transparent 80%),
+      conic-gradient(var(--c) calc(var(--p, 0) * 1turn), #4a3a66 0) border-box;
+  }
+  .cerradura .cuenta {
+    position: absolute; left: -10px; bottom: -8px; padding: 1px 7px; border-radius: 999px;
+    background: #120a22; border: 2px solid var(--c); color: var(--texto);
+    font-size: .42em; font-weight: 800; line-height: 1.4;
+  }
+  .cerradura.abierta .cuenta { display: none; }
   .cerradura .icono { filter: grayscale(1) brightness(.7); transition: filter .5s; }
   .cerradura .candado { position: absolute; right: -8px; bottom: -8px; font-size: .62em; }
   .cerradura.abierta { border-color: var(--c); box-shadow: 0 0 22px var(--c), inset 0 0 14px color-mix(in srgb, var(--c) 40%, transparent); }
@@ -301,6 +314,12 @@
     font-weight: 800; font-size: clamp(1rem, 1.6vw, 1.25rem); line-height: 1.2;
   }
   .alfeizar small { display: block; font-weight: 700; font-size: .8em; color: var(--texto-suave); }
+  .pips { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 5px; }
+  .pip { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--c); }
+  .pip.llena { background: var(--c); box-shadow: 0 0 6px var(--c); }
+  .cat-llaves { display: inline-flex; align-items: center; gap: 10px; margin-left: 18px; color: var(--texto); font-size: .8em; }
+  .cat-llaves .pips { margin: 0; }
+  .cat-llaves .pip { width: 16px; height: 16px; }
   .ventana:hover:not(:disabled) .cristal { transform: translateY(-5px) scale(1.04); box-shadow: inset 0 0 30px rgba(0, 0, 0, .5), 0 0 36px var(--c); }
   .ventana:disabled { cursor: default; }
   .ventana:disabled .cristal { background: radial-gradient(circle at 50% 55%, #fff6c9 0%, color-mix(in srgb, var(--c) 70%, #ffd97a) 70%); }
@@ -449,7 +468,7 @@
   <section class="inicio" id="inicio">
     <h1>La Caja Embrujada</h1>
     <p>¡Cuidado! La puerta se ha cerrado y estáis atrapados en la casa embrujada.</p>
-    <p>En cada ventana se esconde una asignatura. Si acertáis su pregunta, el fantasma os da una llave. Con todas las llaves, la puerta se abre y podéis volver a casa.</p>
+    <p>En cada ventana se esconde una asignatura. Cada pregunta que acertéis es una llave. Con todas las llaves de una asignatura se abre su cerradura, y con todas las cerraduras abiertas, la puerta se abre y podéis volver a casa.</p>
     <label for="nombre">¿Cómo se llama la clase?</label>
     <input id="nombre" type="text" maxlength="24" autocomplete="off" placeholder="Por ejemplo: 3.º A">
     <div class="guardada" id="guardada" hidden>
@@ -550,10 +569,11 @@
 
   var CATS = [];
   var TOTAL = 0;
+  var LLAVES = 5; // llaves (aciertos) que hacen falta por asignatura; se lee de preguntas.json
   var LETRAS = ["A", "B", "C", "D", "E", "F"];
   var MOVIMIENTO = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  var estado = { nombre: "", llaves: {}, aciertos: 0, fallos: 0, vistas: {}, ultimaPos: -1, cat: null, sonido: false, escapando: false };
+  var estado = { nombre: "", llaves: {}, nuevas: {}, aciertos: 0, fallos: 0, vistas: {}, ultimaPos: -1, cat: null, sonido: false, escapando: false };
   var $ = function (s) { return document.querySelector(s); };
 
   // Número entero al azar entre 0 y n-1 (usa el generador criptográfico si existe)
@@ -577,7 +597,16 @@
     return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
   }
   function azar(min, max) { return min + Math.random() * (max - min); }
-  function numLlaves() { return Object.keys(estado.llaves).length; }
+  function llavesDe(id) { return Math.min(+estado.llaves[id] || 0, LLAVES); }
+  function completa(id) { return llavesDe(id) >= LLAVES; }
+  function numLlaves() { return CATS.reduce(function (s, c) { return s + llavesDe(c.id); }, 0); }
+  function totalLlaves() { return TOTAL * LLAVES; }
+  // Fila de huecos para llaves: llenos los conseguidos
+  function pips(n) {
+    var h = "";
+    for (var i = 0; i < LLAVES; i++) h += '<span class="pip' + (i < n ? " llena" : "") + '"></span>';
+    return '<span class="pips" aria-hidden="true">' + h + "</span>";
+  }
 
   /* ---------- Carga de preguntas.json ---------- */
   function texto(v) { return typeof v === "string" || typeof v === "number" ? String(v).trim() : ""; }
@@ -634,6 +663,8 @@
       return;
     }
     CATS = r.cats; TOTAL = CATS.length;
+    var n = parseInt(datos.llavesPorAsignatura, 10);
+    LLAVES = n >= 1 && n <= 20 ? n : 5;
     $("#entrar").disabled = false;
     $("#entrar").textContent = "Entrar en la casa";
     ofrecerPartidaGuardada();
@@ -685,10 +716,13 @@
     var p;
     try { p = JSON.parse(localStorage.getItem(PARTIDA)); } catch (e) { return null; }
     if (!p || typeof p !== "object") return null;
-    var llaves = {};
-    CATS.forEach(function (c) { if (p.llaves && p.llaves[c.id]) llaves[c.id] = true; });
-    var n = Object.keys(llaves).length, aciertos = +p.aciertos || 0, fallos = +p.fallos || 0;
-    if (n >= TOTAL || (n === 0 && aciertos + fallos === 0)) return null;
+    var llaves = {}, n = 0;
+    CATS.forEach(function (c) {
+      var k = p.llaves ? Math.min(+p.llaves[c.id] || 0, LLAVES) : 0;
+      if (k > 0) { llaves[c.id] = k; n += k; }
+    });
+    var aciertos = +p.aciertos || 0, fallos = +p.fallos || 0;
+    if (n >= totalLlaves() || (n === 0 && aciertos + fallos === 0)) return null;
     return { nombre: texto(p.nombre).slice(0, 24), llaves: llaves, aciertos: aciertos, fallos: fallos };
   }
   function ofrecerPartidaGuardada() {
@@ -697,9 +731,10 @@
     $("#entrar").classList.toggle("secundario", !!p);
     $("#entrar").textContent = p ? "Empezar una partida nueva" : "Entrar en la casa";
     if (!p) return;
-    var n = Object.keys(p.llaves).length;
+    var n = 0;
+    for (var id in p.llaves) n += p.llaves[id];
     $("#guardada-texto").innerHTML = "Hay una partida a medias" + (p.nombre ? " de <strong>" + escapar(p.nombre) + "</strong>" : "") +
-      ": <strong>" + n + " de " + TOTAL + " llaves</strong>.";
+      ": <strong>" + n + " de " + totalLlaves() + " llaves</strong>.";
     if (p.nombre) $("#nombre").value = p.nombre;
   }
 
@@ -875,18 +910,20 @@
 
   /* ---------- Sala ---------- */
   function ventana(c, i) {
-    var tiene = !!estado.llaves[c.id];
+    var n = llavesDe(c.id), tiene = n >= LLAVES;
     return '<button class="ventana" type="button" data-id="' + escapar(c.id) + '" style="--c:' + c.color + ';--i:' + i + '"' + (tiene ? " disabled" : "") + '>' +
       '<span class="cristal"><span class="icono" aria-hidden="true">' + (tiene ? "🗝️" : escapar(c.icono)) + '</span></span>' +
-      '<span class="alfeizar">' + escapar(c.nombre) + '<small>' + (tiene ? "Llave conseguida" : "Pulsa para abrir") + '</small></span></button>';
+      '<span class="alfeizar">' + escapar(c.nombre) +
+      '<small>' + (tiene ? "¡Todas las llaves!" : "Llaves: " + n + " de " + LLAVES) + '</small>' + pips(n) + '</span></button>';
   }
 
   function pintarSala() {
     $("#cerraduras").innerHTML = CATS.map(function (c) {
-      var abierta = !!estado.llaves[c.id];
-      return '<div class="cerradura' + (abierta ? " abierta" : "") + '" data-id="' + escapar(c.id) + '" style="--c:' + c.color + '"' +
-        ' title="' + escapar(c.nombre) + (abierta ? ": llave conseguida" : ": falta la llave") + '">' +
+      var n = llavesDe(c.id), abierta = n >= LLAVES;
+      return '<div class="cerradura' + (abierta ? " abierta" : "") + '" data-id="' + escapar(c.id) + '" style="--c:' + c.color + ";--p:" + (n / LLAVES) + '"' +
+        ' title="' + escapar(c.nombre) + ": " + n + " de " + LLAVES + ' llaves">' +
         '<span class="icono" aria-hidden="true">' + escapar(c.icono) + '</span>' +
+        '<span class="cuenta" aria-hidden="true">' + n + "/" + LLAVES + '</span>' +
         '<span class="candado" aria-hidden="true">' + (abierta ? "🗝️" : "🔒") + '</span></div>';
     }).join("");
 
@@ -896,8 +933,8 @@
     $("#ventanas-der").innerHTML = CATS.slice(mitad).map(function (c, i) { return ventana(c, mitad + i); }).join("");
 
     var n = numLlaves();
-    $("#contador").textContent = "🗝️ " + n + " de " + TOTAL + " llaves";
-    var resta = TOTAL - n;
+    $("#contador").textContent = "🗝️ " + n + " de " + totalLlaves() + " llaves";
+    var resta = totalLlaves() - n;
     $("#pista").textContent = resta === 0 ? "¡Tenéis todas las llaves!" :
       (resta === 1 ? "Solo os falta 1 llave." : "Os faltan " + resta + " llaves. Pulsa una ventana.");
   }
@@ -959,7 +996,7 @@
     panel.classList.remove("temblar");
     // Reinicia la animación de entrada
     panel.style.animation = "none"; void panel.offsetWidth; panel.style.animation = "";
-    $("#cat").innerHTML = '<span class="icono" aria-hidden="true">' + escapar(cat.icono) + '</span>' + escapar(cat.nombre);
+    pintarCabeceraPregunta();
     $("#pregunta").textContent = item[0];
     $("#resultado").innerHTML = "";
     $("#resultado").className = "";
@@ -983,6 +1020,12 @@
     $("#pregunta").focus();
   }
 
+  function pintarCabeceraPregunta() {
+    var cat = estado.cat, n = llavesDe(cat.id);
+    $("#cat").innerHTML = '<span class="icono" aria-hidden="true">' + escapar(cat.icono) + '</span>' + escapar(cat.nombre) +
+      '<span class="cat-llaves">🗝️ ' + n + " de " + LLAVES + pips(n) + "</span>";
+  }
+
   function responder(boton, elegida, opciones, correcta) {
     var botones = $("#opciones").children;
     for (var i = 0; i < botones.length; i++) {
@@ -993,16 +1036,29 @@
     var res = $("#resultado"), acc = $("#acciones");
 
     if (elegida.ok) {
+      var cat = estado.cat, n = llavesDe(cat.id) + 1;
       estado.aciertos++;
-      estado.llaves[estado.cat.id] = true;
+      estado.llaves[cat.id] = n;
+      estado.nuevas[cat.id] = true;
       guardarPartida();
-      tonos([523, 659, 784], 0.13);
+      tonos(n >= LLAVES ? [523, 659, 784, 1047] : [523, 659, 784], 0.13);
       chispas(boton);
+      pintarCabeceraPregunta();
       res.className = "resultado bien";
-      res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto! Habéis conseguido la llave de ' + escapar(estado.cat.nombre) + '.';
-      acc.innerHTML = '<button class="btn principal" type="button" id="coger">Coger la llave</button>';
-      $("#coger").addEventListener("click", function () { cerrarPregunta(true); });
-      $("#coger").focus();
+      if (n >= LLAVES) {
+        res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto! Ya tenéis las ' + LLAVES + ' llaves de ' + escapar(cat.nombre) + '. ¡Su cerradura se abre!';
+        acc.innerHTML = '<button class="btn principal" type="button" id="coger">Coger las llaves</button>';
+        $("#coger").addEventListener("click", cerrarPregunta);
+        $("#coger").focus();
+      } else {
+        res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto! Llave ' + n + ' de ' + LLAVES + ' de ' + escapar(cat.nombre) + '.';
+        acc.innerHTML =
+          '<button class="btn principal" type="button" id="seguir">Siguiente pregunta de ' + escapar(cat.nombre) + '</button>' +
+          '<button class="btn" type="button" id="volver">Volver a la casa</button>';
+        $("#seguir").addEventListener("click", function () { abrirPregunta(cat.id); });
+        $("#volver").addEventListener("click", cerrarPregunta);
+        $("#seguir").focus();
+      }
     } else {
       boton.classList.add("mal");
       estado.fallos++;
@@ -1015,23 +1071,24 @@
         '<button class="btn principal" type="button" id="otra-preg">Probar con otra pregunta</button>' +
         '<button class="btn" type="button" id="volver">Volver a la casa</button>';
       $("#otra-preg").addEventListener("click", function () { abrirPregunta(estado.cat.id); });
-      $("#volver").addEventListener("click", function () { cerrarPregunta(false); });
+      $("#volver").addEventListener("click", cerrarPregunta);
       $("#otra-preg").focus();
     }
   }
 
-  function cerrarPregunta(conseguida) {
-    var id = estado.cat && estado.cat.id;
+  function cerrarPregunta() {
     $("#velo").hidden = true;
     document.body.style.overflow = "";
     pintarSala();
-    if (conseguida && id) {
+    // Celebra las llaves conseguidas desde la última vez que se cerró la pregunta
+    Object.keys(estado.nuevas).forEach(function (id) {
       var sel = '[data-id="' + id.replace(/["\\]/g, "\\$&") + '"]';
       var el = document.querySelector(".cerradura" + sel);
       if (el) el.classList.add("recien");
       chispas(document.querySelector(".ventana" + sel));
-      if (numLlaves() === TOTAL) { escaparDeLaCasa(); return; }
-    }
+    });
+    estado.nuevas = {};
+    if (numLlaves() >= totalLlaves()) { escaparDeLaCasa(); return; }
     var siguienteVentana = document.querySelector(".ventana:not(:disabled)");
     if (siguienteVentana) siguienteVentana.focus();
   }
@@ -1111,7 +1168,7 @@
   }
 
   function reiniciar() {
-    estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0; estado.cat = null; estado.escapando = false;
+    estado.llaves = {}; estado.nuevas = {}; estado.aciertos = 0; estado.fallos = 0; estado.cat = null; estado.escapando = false;
     borrarPartida();
     $("#final").hidden = true;
     $("#confeti").innerHTML = "";
@@ -1134,7 +1191,7 @@
       estado.aciertos = guardada.aciertos; estado.fallos = guardada.fallos;
     } else {
       estado.nombre = $("#nombre").value.trim();
-      estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0;
+      estado.llaves = {}; estado.nuevas = {}; estado.aciertos = 0; estado.fallos = 0;
       borrarPartida();
     }
     $("#inicio").hidden = true;
@@ -1158,9 +1215,7 @@
   $("#ventanas-izq").addEventListener("click", alPulsarVentana);
   $("#ventanas-der").addEventListener("click", alPulsarVentana);
   $("#otra").addEventListener("click", reiniciar);
-  $("#cerrar").addEventListener("click", function () {
-    cerrarPregunta(!!(estado.cat && estado.llaves[estado.cat.id] && $("#coger")));
-  });
+  $("#cerrar").addEventListener("click", cerrarPregunta);
   $("#sonido").addEventListener("click", function () {
     estado.sonido = !estado.sonido;
     this.textContent = estado.sonido ? "🔊 Con efectos" : "🔇 Sin efectos";
@@ -1200,7 +1255,7 @@
   });
 
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && !$("#velo").hidden) cerrarPregunta(!!(estado.cat && estado.llaves[estado.cat.id] && $("#coger")));
+    if (e.key === "Escape" && !$("#velo").hidden) cerrarPregunta();
   });
 
   cargarPreguntas();
