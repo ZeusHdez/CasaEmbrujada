@@ -122,6 +122,10 @@
   }
   .boton-grande:active { transform: translateY(4px); box-shadow: 0 2px 0 #b97d1d; }
   .boton-grande:disabled { opacity: .5; cursor: wait; }
+  .boton-grande.secundario { background: transparent; color: var(--texto); border: 3px solid var(--piedra); box-shadow: none; transition: none; font-size: 1.05rem; }
+  .guardada { margin: 26px auto 0; padding: 16px 18px 20px; max-width: 46ch; border-radius: 16px; background: var(--noche-2); border: 2px solid var(--vela); }
+  .guardada p { margin: 0; color: var(--texto); font-size: 1.1rem; }
+  .guardada .boton-grande { margin-top: 12px; }
   .carga { margin: 18px auto 0; max-width: 52ch; padding: 12px 16px; border-radius: 14px; text-align: left; font-size: 1rem; }
   .carga.error { background: rgba(255, 123, 123, .12); border: 2px solid var(--mal); }
   .carga.aviso { background: rgba(255, 184, 77, .1); border: 2px solid var(--vela); }
@@ -448,6 +452,10 @@
     <p>En cada ventana se esconde una asignatura. Si acertáis su pregunta, el fantasma os da una llave. Con todas las llaves, la puerta se abre y podéis volver a casa.</p>
     <label for="nombre">¿Cómo se llama la clase?</label>
     <input id="nombre" type="text" maxlength="24" autocomplete="off" placeholder="Por ejemplo: 3.º A">
+    <div class="guardada" id="guardada" hidden>
+      <p id="guardada-texto"></p>
+      <button class="boton-grande" id="continuar" type="button">▶ Continuar la partida</button>
+    </div>
     <div><button class="boton-grande" id="entrar" type="button" disabled>Cargando preguntas…</button></div>
     <div class="carga" id="carga" hidden></div>
     <input type="file" id="archivo-preguntas" accept=".json,application/json" hidden>
@@ -459,6 +467,7 @@
       <h1>La Caja Embrujada</h1>
       <div class="lado">
         <span class="contador" id="contador" aria-live="polite"></span>
+        <button class="btn-sonido" id="nueva" type="button">↺ Nueva partida</button>
         <button class="btn-sonido" id="musica" type="button" aria-pressed="false">🎵 Música</button>
         <button class="btn-sonido" id="elegir-cancion" type="button" title="Cargar un archivo de audio de este ordenador">📂 Tu canción</button>
         <input type="file" id="archivo-cancion" accept="audio/*" hidden>
@@ -627,6 +636,7 @@
     CATS = r.cats; TOTAL = CATS.length;
     $("#entrar").disabled = false;
     $("#entrar").textContent = "Entrar en la casa";
+    ofrecerPartidaGuardada();
     if (r.avisos.length) mostrarCarga("aviso", "<strong>Algunas preguntas tienen fallos:</strong><ul><li>" + r.avisos.map(escapar).join("</li><li>") + "</li></ul>");
     else $("#carga").hidden = true;
   }
@@ -656,6 +666,42 @@
     lector.readAsText(f, "utf-8");
     this.value = "";
   });
+
+  /* ---------- Partida guardada ----------
+     El progreso (nombre de la clase, llaves, aciertos y fallos) se guarda en
+     este navegador con localStorage, así una recarga o cerrar la pestaña no lo
+     pierde. Se borra al escapar de la casa o al empezar una partida nueva. */
+  var PARTIDA = "cajaEmbrujada.partida";
+  function guardarPartida() {
+    try {
+      localStorage.setItem(PARTIDA, JSON.stringify({
+        nombre: estado.nombre, llaves: estado.llaves, aciertos: estado.aciertos, fallos: estado.fallos
+      }));
+    } catch (e) { /* sin memoria, no pasa nada */ }
+  }
+  function borrarPartida() { try { localStorage.removeItem(PARTIDA); } catch (e) { /* nada */ } }
+  // Devuelve la partida guardada adaptada a las asignaturas actuales, o null si no hay nada que continuar
+  function leerPartida() {
+    var p;
+    try { p = JSON.parse(localStorage.getItem(PARTIDA)); } catch (e) { return null; }
+    if (!p || typeof p !== "object") return null;
+    var llaves = {};
+    CATS.forEach(function (c) { if (p.llaves && p.llaves[c.id]) llaves[c.id] = true; });
+    var n = Object.keys(llaves).length, aciertos = +p.aciertos || 0, fallos = +p.fallos || 0;
+    if (n >= TOTAL || (n === 0 && aciertos + fallos === 0)) return null;
+    return { nombre: texto(p.nombre).slice(0, 24), llaves: llaves, aciertos: aciertos, fallos: fallos };
+  }
+  function ofrecerPartidaGuardada() {
+    var p = leerPartida();
+    $("#guardada").hidden = !p;
+    $("#entrar").classList.toggle("secundario", !!p);
+    $("#entrar").textContent = p ? "Empezar una partida nueva" : "Entrar en la casa";
+    if (!p) return;
+    var n = Object.keys(p.llaves).length;
+    $("#guardada-texto").innerHTML = "Hay una partida a medias" + (p.nombre ? " de <strong>" + escapar(p.nombre) + "</strong>" : "") +
+      ": <strong>" + n + " de " + TOTAL + " llaves</strong>.";
+    if (p.nombre) $("#nombre").value = p.nombre;
+  }
 
   /* ---------- Efectos de sonido (apagados por defecto) ---------- */
   var ac = null;
@@ -949,6 +995,7 @@
     if (elegida.ok) {
       estado.aciertos++;
       estado.llaves[estado.cat.id] = true;
+      guardarPartida();
       tonos([523, 659, 784], 0.13);
       chispas(boton);
       res.className = "resultado bien";
@@ -959,6 +1006,7 @@
     } else {
       boton.classList.add("mal");
       estado.fallos++;
+      guardarPartida();
       tonos([233, 165], 0.22, "sawtooth");
       sustoGrande();
       res.className = "resultado mal";
@@ -1036,6 +1084,7 @@
 
   function escaparDeLaCasa() {
     estado.escapando = true;
+    borrarPartida();
     document.body.style.overflow = "hidden";
     $("#puerta").scrollIntoView({ behavior: MOVIMIENTO ? "smooth" : "auto", block: "center" });
     setTimeout(function () {
@@ -1063,6 +1112,7 @@
 
   function reiniciar() {
     estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0; estado.cat = null; estado.escapando = false;
+    borrarPartida();
     $("#final").hidden = true;
     $("#confeti").innerHTML = "";
     document.body.style.overflow = "";
@@ -1076,9 +1126,17 @@
   }
 
   /* ---------- Eventos ---------- */
-  function empezar() {
+  function empezar(continuar) {
     if (!TOTAL) return;
-    estado.nombre = $("#nombre").value.trim();
+    var guardada = continuar === true ? leerPartida() : null;
+    if (guardada) {
+      estado.nombre = guardada.nombre; estado.llaves = guardada.llaves;
+      estado.aciertos = guardada.aciertos; estado.fallos = guardada.fallos;
+    } else {
+      estado.nombre = $("#nombre").value.trim();
+      estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0;
+      borrarPartida();
+    }
     $("#inicio").hidden = true;
     $("#juego").hidden = false;
     pintarSala();
@@ -1090,8 +1148,13 @@
     var b = e.target.closest(".ventana");
     if (b && !b.disabled && !estado.escapando) abrirPregunta(b.getAttribute("data-id"));
   }
-  $("#entrar").addEventListener("click", empezar);
-  $("#nombre").addEventListener("keydown", function (e) { if (e.key === "Enter") empezar(); });
+  $("#entrar").addEventListener("click", function () { empezar(false); });
+  $("#continuar").addEventListener("click", function () { empezar(true); });
+  $("#nombre").addEventListener("keydown", function (e) { if (e.key === "Enter") empezar(!$("#guardada").hidden); });
+  $("#nueva").addEventListener("click", function () {
+    if (estado.escapando) return;
+    if (numLlaves() === 0 || window.confirm("¿Empezar una partida nueva? Se perderán las llaves conseguidas.")) reiniciar();
+  });
   $("#ventanas-izq").addEventListener("click", alPulsarVentana);
   $("#ventanas-der").addEventListener("click", alPulsarVentana);
   $("#otra").addEventListener("click", reiniciar);

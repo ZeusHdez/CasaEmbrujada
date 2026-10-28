@@ -33,7 +33,12 @@
         { "pregunta": "En el patio hay 3 bancos y en cada uno se sientan 6 niños. ¿Cuántos niños hay sentados?", "correcta": "18", "incorrectas": ["9", "36", "15"] },
         { "pregunta": "Ana tenía 10 € y se gasta 3 € en un bocadillo y 2 € en un zumo. ¿Cuánto dinero le queda?", "correcta": "5 €", "incorrectas": ["7 €", "8 €", "15 €"] },
         { "pregunta": "En una granja hay 8 vacas. ¿Cuántas patas tienen en total?", "correcta": "32", "incorrectas": ["12", "16", "24"] },
-        { "pregunta": "En clase somos 25 alumnos y hoy han faltado 3. ¿Cuántos hemos venido?", "correcta": "22", "incorrectas": ["28", "23", "21"] }
+        { "pregunta": "En clase somos 25 alumnos y hoy han faltado 3. ¿Cuántos hemos venido?", "correcta": "22", "incorrectas": ["28", "23", "21"] },
+        { "pregunta": "¿Cuánto es 1C + 9D + 3U?", "correcta": "193", "incorrectas": ["913", "139", "103"] },
+        { "pregunta": "¿Cuántas decenas son 70 unidades?", "correcta": "7", "incorrectas": ["70", "700", "17"] },
+        { "pregunta": "¿Cuánto es 2C + 25D?", "correcta": "450", "incorrectas": ["225", "252", "475"] },
+        { "pregunta": "En la biblioteca hay 3 estanterías con 100 libros cada una. ¿Cuántos libros hay?", "correcta": "300", "incorrectas": ["103", "30", "400"] },
+        { "pregunta": "Carlos tenía 64 canicas y perdió 28. ¿Cuántas le quedan?", "correcta": "36", "incorrectas": ["46", "92", "34"] }
       ]
     },
     {
@@ -94,7 +99,12 @@
         { "pregunta": "¿Qué parte del cuerpo une la cabeza con el tronco?", "correcta": "El cuello", "incorrectas": ["La cintura", "El hombro", "La cadera"] },
         { "pregunta": "¿Qué órganos usamos para respirar?", "correcta": "Los pulmones", "incorrectas": ["El corazón", "El estómago", "Los riñones"] },
         { "pregunta": "¿Qué órgano bombea la sangre por todo el cuerpo?", "correcta": "El corazón", "incorrectas": ["Los pulmones", "El estómago", "El cerebro"] },
-        { "pregunta": "¿Con qué sentido notamos si algo está frío o caliente?", "correcta": "El tacto", "incorrectas": ["El oído", "La vista", "El olfato"] }
+        { "pregunta": "¿Con qué sentido notamos si algo está frío o caliente?", "correcta": "El tacto", "incorrectas": ["El oído", "La vista", "El olfato"] },
+        { "pregunta": "¿Cuál de estos animales es un ave?", "correcta": "El pingüino", "incorrectas": ["El murciélago", "La ballena", "La tortuga"] },
+        { "pregunta": "¿Qué animal tiene el cuerpo cubierto de escamas y respira por branquias?", "correcta": "El pez", "incorrectas": ["La serpiente", "El delfín", "La rana"] },
+        { "pregunta": "¿Por qué las plantas son seres vivos?", "correcta": "Porque se nutren, se relacionan y se reproducen", "incorrectas": ["Porque tienen hojas verdes", "Porque no se mueven", "Porque viven en la tierra"] },
+        { "pregunta": "¿Cómo se llaman los brazos y las piernas?", "correcta": "Extremidades", "incorrectas": ["Tronco", "Cabeza", "Articulaciones"] },
+        { "pregunta": "¿Cuántas patas tienen las arañas?", "correcta": "8", "incorrectas": ["6", "4", "10"] }
       ]
     },
     {
@@ -132,7 +142,12 @@
         { "pregunta": "En una receta, ¿qué son los ingredientes?", "correcta": "Los alimentos que necesitamos", "incorrectas": ["Las herramientas de cocina", "Los pasos que hay que seguir", "El dibujo del plato"] },
         { "pregunta": "¿Cuál de estos es un utensilio de cocina?", "correcta": "la sartén", "incorrectas": ["el huevo", "la harina", "el azúcar"] },
         { "pregunta": "¿Por qué los pasos de una receta van numerados?", "correcta": "Para seguirlos en orden", "incorrectas": ["Para que quede bonito", "Para contar los ingredientes", "No sirven para nada"] },
-        { "pregunta": "¿Qué palabra es típica de los pasos de una receta?", "correcta": "Mezcla", "incorrectas": ["Érase una vez", "Colorín colorado", "Querida abuela"] }
+        { "pregunta": "¿Qué palabra es típica de los pasos de una receta?", "correcta": "Mezcla", "incorrectas": ["Érase una vez", "Colorín colorado", "Querida abuela"] },
+        { "pregunta": "¿Cuál de estas palabras NO es un sustantivo?", "correcta": "saltar", "incorrectas": ["árbol", "Lucía", "ventana"] },
+        { "pregunta": "En «La niña simpática canta», ¿qué palabra dice cómo es la niña?", "correcta": "simpática", "incorrectas": ["niña", "canta", "La"] },
+        { "pregunta": "¿Cuál es la sílaba tónica de «ventana»?", "correcta": "ta", "incorrectas": ["ven", "na", "ve"] },
+        { "pregunta": "¿Cuál es la sílaba tónica de «lápiz»?", "correcta": "lá", "incorrectas": ["piz", "pi", "iz"] },
+        { "pregunta": "¿Qué parte de la receta nos dice los alimentos que necesitamos?", "correcta": "Los ingredientes", "incorrectas": ["Los pasos", "El título", "Los utensilios"] }
       ]
     }
   ]

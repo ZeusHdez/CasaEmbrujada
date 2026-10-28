@@ -24,6 +24,12 @@ Todas las preguntas están en **`preguntas.json`**. Cada pregunta ocupa una lín
 
 Si el archivo tiene un error (una coma o una comilla de más o de menos), el juego lo avisa en la pantalla de inicio y dice dónde está. También puedes comprobarlo pegándolo en https://jsonlint.com.
 
+## Partida guardada
+
+El progreso (nombre de la clase, llaves conseguidas, aciertos y fallos) se guarda automáticamente en el navegador del ordenador donde se juega. Si se recarga la página o se cierra el navegador, al volver aparece **▶ Continuar la partida**. La partida guardada se borra al escapar de la casa, al pulsar «Empezar una partida nueva» o con el botón **↺ Nueva partida** de arriba.
+
+Se guarda solo en ese ordenador y ese navegador: si se abre el juego en otro ordenador, empieza de cero.
+
 ## Música y efectos
 
 - **🎵 Música** pone una melodía de miedo original que genera el propio navegador (no necesita internet).
