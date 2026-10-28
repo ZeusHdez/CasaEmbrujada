@@ -1,10 +1,10 @@
 # La Caja Embrujada
 
-Juego de preguntas para 3.º de primaria: estás atrapado en una sala embrujada y tienes que conseguir una llave por asignatura (Matemáticas, Inglés, Conocimiento del medio y Lengua) respondiendo bien para abrir la puerta.
+Juego de preguntas para jugar toda la clase en la pizarra digital o el proyector (3.º de primaria). La clase está atrapada en una casa embrujada: en cada ventana hay una asignatura (Matemáticas, Inglés, Conocimiento del medio y Lengua). Al pulsar una ventana se abre su pregunta en grande; si la aciertan, consiguen una llave. Con todas las llaves se abre la puerta.
 
 ## Cómo jugar
 
-Abre `index.html` en el navegador. No necesita instalación ni conexión.
+Abre `index.html` en el navegador (o la versión de GitHub Pages) y pulsa «Pantalla completa» para proyectarlo. No necesita instalación ni conexión.
 
 ## Editar las preguntas
 
