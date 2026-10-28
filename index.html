@@ -62,6 +62,7 @@
     background: transparent; border: 2px solid var(--piedra); border-radius: 999px; padding: 6px 14px;
   }
   .btn-sonido:hover { border-color: var(--texto-suave); }
+  .btn-sonido[aria-pressed="true"] { border-color: var(--vela); color: var(--vela); }
 
   /* Pantalla de inicio */
   .inicio { max-width: 640px; margin: 8vh auto 0; text-align: center; }
@@ -96,6 +97,50 @@
     .sala { grid-template-columns: 1fr auto 1fr; grid-template-areas: "izq puerta der"; gap: 40px; }
   }
 
+  /* La casa por fuera: tejado, fachada y suelo */
+  .casa { position: relative; margin: 0 3%; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .5)); }
+  .tejado-zona { position: relative; height: clamp(70px, 10vw, 160px); margin: 0 -2%; }
+  .tejado {
+    position: absolute; inset: 0;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    background:
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, .35) 0 3px, transparent 3px 16px),
+      linear-gradient(180deg, #6b4596, #3d2563);
+  }
+  .tejado-borde {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 10px; border-radius: 4px;
+    background: var(--vela); box-shadow: 0 0 18px rgba(255, 184, 77, .6);
+  }
+  .chimenea {
+    position: absolute; right: 16%; bottom: 40%; width: clamp(28px, 3.5vw, 52px); height: clamp(40px, 5.5vw, 84px);
+    background: repeating-linear-gradient(0deg, #5a3a3a 0 12px, #3e2626 12px 14px);
+    border: 3px solid #2a1818; border-radius: 3px;
+  }
+  .humo { position: absolute; left: 50%; bottom: 100%; font-size: clamp(1rem, 2vw, 1.6rem); opacity: .5; animation: humo 5s ease-out infinite; }
+  @keyframes humo { from { transform: translate(-50%, 0) scale(.6); opacity: .6; } to { transform: translate(-10%, -60px) scale(1.4); opacity: 0; } }
+  .buhardilla {
+    position: absolute; left: 50%; bottom: 18%; transform: translateX(-50%);
+    width: clamp(34px, 4vw, 58px); aspect-ratio: 1; border-radius: 50%;
+    display: grid; place-items: center; font-size: clamp(1rem, 2vw, 1.7rem);
+    background: radial-gradient(circle, #fff1b0, #ffb84d 70%); border: 4px solid #2a1818;
+    box-shadow: 0 0 20px rgba(255, 184, 77, .7);
+  }
+  .fachada {
+    position: relative; padding: clamp(14px, 2vw, 28px) clamp(12px, 2.4vw, 40px) clamp(16px, 2vw, 26px);
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, .35), transparent 18%),
+      repeating-linear-gradient(0deg, #2b1b47 0 40px, #201336 40px 43px);
+    border: 8px solid #4a3470; border-top: 0; border-radius: 0 0 6px 6px;
+  }
+  .suelo {
+    position: relative; height: 30px; margin: 0 -3%; border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    background: linear-gradient(180deg, #2f5a2a, #1b3418);
+  }
+  .suelo span { position: absolute; bottom: 10px; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1; }
+  .suelo span:nth-child(1) { left: 4%; }
+  .suelo span:nth-child(2) { left: 11%; font-size: clamp(1.4rem, 2.4vw, 2rem); }
+  .suelo span:nth-child(3) { right: 4%; }
+
   .escena { perspective: 1200px; display: grid; justify-items: center; }
   .letrero {
     margin: 0 0 14px; padding: 6px 26px; border-radius: 10px;
@@ -114,7 +159,7 @@
     box-shadow: 0 0 0 5px #2b1d47, 0 0 0 9px var(--vela), 0 24px 60px rgba(0, 0, 0, .55);
     animation: aura 3.2s ease-in-out infinite;
   }
-  @media (min-width: 900px) { .marco { width: min(30vw, 440px, 52vh); } }
+  @media (min-width: 900px) { .marco { width: min(26vw, 380px, 42vh); } }
   @keyframes aura {
     0%, 100% { box-shadow: 0 0 0 5px #2b1d47, 0 0 0 9px var(--vela), 0 0 40px 10px rgba(255, 140, 50, .25), 0 24px 60px rgba(0, 0, 0, .55); }
     50% { box-shadow: 0 0 0 5px #2b1d47, 0 0 0 9px var(--vela), 0 0 90px 26px rgba(255, 140, 50, .5), 0 24px 60px rgba(0, 0, 0, .55); }
@@ -156,7 +201,7 @@
     display: grid; justify-items: center; gap: 10px; width: 100%; max-width: 240px;
     background: none; border: 0; padding: 0;
   }
-  @media (min-width: 900px) { .ventana { width: clamp(150px, 16vw, 240px); } }
+  @media (min-width: 900px) { .ventana { width: clamp(130px, min(15vw, 26vh), 230px); } }
   .cristal {
     position: relative; width: 100%; aspect-ratio: 1 / 1.1; overflow: hidden;
     display: grid; place-items: center;
@@ -278,11 +323,22 @@
       <h1>La Caja Embrujada</h1>
       <div class="lado">
         <span class="contador" id="contador" aria-live="polite"></span>
-        <button class="btn-sonido" id="sonido" type="button" aria-pressed="false">🔇 Sin sonido</button>
+        <button class="btn-sonido" id="musica" type="button" aria-pressed="false">🎵 Música</button>
+        <button class="btn-sonido" id="elegir-cancion" type="button" title="Cargar un archivo de audio de este ordenador">📂 Tu canción</button>
+        <input type="file" id="archivo-cancion" accept="audio/*" hidden>
+        <button class="btn-sonido" id="sonido" type="button" aria-pressed="false">🔇 Sin efectos</button>
         <button class="btn-sonido" id="pantalla" type="button">⛶ Pantalla completa</button>
       </div>
     </div>
 
+    <div class="casa">
+    <div class="tejado-zona" aria-hidden="true">
+      <div class="chimenea"><span class="humo">💨</span></div>
+      <div class="tejado"></div>
+      <div class="buhardilla">🦇</div>
+      <div class="tejado-borde"></div>
+    </div>
+    <div class="fachada">
     <div class="sala">
       <div class="ventanas" id="ventanas-izq"></div>
       <div class="escena">
@@ -294,6 +350,9 @@
         <p class="pista" id="pista">Pulsa una ventana para ver su pregunta.</p>
       </div>
       <div class="ventanas" id="ventanas-der"></div>
+    </div>
+    </div>
+    <div class="suelo" aria-hidden="true"><span>🎃</span><span>🪦</span><span>🎃</span></div>
     </div>
   </section>
 
@@ -475,6 +534,73 @@ window.CATEGORIAS = [
     } catch (e) { /* sin audio, no pasa nada */ }
   }
 
+  /* ---------- Música de fondo ----------
+     Melodía de miedo propia, sonando en bucle con Web Audio.
+     Si la profe carga su propia canción, suena esa en su lugar. */
+  var musica = { sonando: false, temporizador: null, paso: 0, proxima: 0, salida: null, audio: null };
+  var NEGRA = 60 / 116, CORCHEA = NEGRA / 2;
+  function hz(midi) { return 440 * Math.pow(2, (midi - 69) / 12); }
+  // Re menor: bajo saltarín en corcheas (4 compases)
+  var BAJO = [38, 50, 45, 50, 38, 50, 45, 50, 34, 46, 41, 46, 34, 46, 41, 46,
+              31, 43, 38, 43, 31, 43, 38, 43, 33, 45, 49, 45, 33, 45, 40, 45];
+  // Melodía en corcheas (null = silencio); 8 compases
+  var MELODIA = [
+    74, null, 77, 76, 74, null, 69, null,   70, null, 74, 72, 70, null, 65, null,
+    67, 69, 70, 74, 73, null, 74, null,     76, null, 73, null, 69, 70, 69, 68,
+    74, null, 77, 76, 74, null, 81, null,   82, null, 81, 79, 77, null, 74, null,
+    79, 77, 76, 74, 73, null, 76, null,     74, null, null, null, 62, null, 61, null
+  ];
+  function nota(f, t, dur, tipo, vol) {
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = tipo; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(musica.salida);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  function chasquido(t) {
+    var len = Math.floor(ac.sampleRate * 0.04), buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    var s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+    s.buffer = buf; f.type = "highpass"; f.frequency.value = 6000; g.gain.value = 0.25;
+    s.connect(f); f.connect(g); g.connect(musica.salida); s.start(t);
+  }
+  function programar() {
+    while (musica.proxima < ac.currentTime + 0.15) {
+      var p = musica.paso, t = musica.proxima;
+      nota(hz(BAJO[p % BAJO.length]), t, CORCHEA * 0.9, "square", 0.12);
+      var m = MELODIA[p % MELODIA.length];
+      if (m !== null) nota(hz(m), t, CORCHEA * 1.6, "triangle", 0.3);
+      if (p % 2 === 1) chasquido(t);
+      musica.paso++; musica.proxima += CORCHEA;
+    }
+  }
+  function empezarMusica() {
+    if (musica.audio) {
+      var r = musica.audio.play();
+      if (r && r.catch) r.catch(function () {});
+    } else {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+      if (!musica.salida) { musica.salida = ac.createGain(); musica.salida.gain.value = 0.35; musica.salida.connect(ac.destination); }
+      musica.paso = 0; musica.proxima = ac.currentTime + 0.05;
+      programar();
+      musica.temporizador = setInterval(programar, 40);
+    }
+    musica.sonando = true;
+  }
+  function pararMusica() {
+    if (musica.audio) musica.audio.pause();
+    clearInterval(musica.temporizador); musica.temporizador = null;
+    musica.sonando = false;
+  }
+  function pintarBotonMusica() {
+    var b = $("#musica");
+    b.textContent = musica.sonando ? "⏸ Parar música" : "🎵 Música";
+    b.setAttribute("aria-pressed", String(musica.sonando));
+  }
+
   /* ---------- Sala ---------- */
   function ventana(c) {
     var tiene = !!estado.llaves[c.id];
@@ -647,9 +773,25 @@ window.CATEGORIAS = [
   });
   $("#sonido").addEventListener("click", function () {
     estado.sonido = !estado.sonido;
-    this.textContent = estado.sonido ? "🔊 Con sonido" : "🔇 Sin sonido";
+    this.textContent = estado.sonido ? "🔊 Con efectos" : "🔇 Sin efectos";
     this.setAttribute("aria-pressed", String(estado.sonido));
     tonos([660], 0.1);
+  });
+  $("#musica").addEventListener("click", function () {
+    try { if (musica.sonando) pararMusica(); else empezarMusica(); } catch (e) { /* sin audio */ }
+    pintarBotonMusica();
+  });
+  $("#elegir-cancion").addEventListener("click", function () { $("#archivo-cancion").click(); });
+  $("#archivo-cancion").addEventListener("change", function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    pararMusica();
+    if (musica.audio) URL.revokeObjectURL(musica.audio.src);
+    musica.audio = new Audio(URL.createObjectURL(f));
+    musica.audio.loop = true;
+    $("#elegir-cancion").textContent = "📂 " + (f.name.length > 22 ? f.name.slice(0, 20) + "…" : f.name);
+    try { empezarMusica(); } catch (e) { /* sin audio */ }
+    pintarBotonMusica();
   });
 
   // Pantalla completa (para proyectar en clase)

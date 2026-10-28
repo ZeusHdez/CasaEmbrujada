@@ -15,3 +15,8 @@ El banco de preguntas está en `index.html`, en `window.CATEGORIAS`. Cada pregun
 ```
 
 La respuesta correcta va siempre la primera; el juego baraja las opciones.
+
+## Música
+
+- **🎵 Música** pone una melodía de miedo original que genera el propio navegador (no necesita internet).
+- **📂 Tu canción** permite elegir un archivo de audio del ordenador (por ejemplo un MP3) para que suene en bucle en lugar de la melodía. El archivo no se sube a ningún sitio; solo suena en ese navegador.
