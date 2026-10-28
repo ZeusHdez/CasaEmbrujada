@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>La Caja Embrujada</title>
+<style>
+  :root {
+    --noche: #170d2b;
+    --noche-2: #231440;
+    --piedra: #3b2a5c;
+    --vela: #ffb84d;
+    --texto: #f3eeff;
+    --texto-suave: #c9bde6;
+    --bien: #7ddc92;
+    --mal: #ff7b7b;
+    --tinta: #1b1030;
+    --titulo: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --cuerpo: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; background: var(--noche); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--texto);
+    font-family: var(--cuerpo);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    background: radial-gradient(ellipse at 50% 0%, #3a2466 0%, var(--noche) 62%) fixed var(--noche);
+    overflow-x: hidden;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--vela); outline-offset: 3px; }
+
+  /* Fantasmas de fondo (muy suaves) */
+  .fondo { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .fondo span { position: absolute; font-size: 3rem; opacity: .1; animation: flotar 14s ease-in-out infinite; }
+  .fondo span:nth-child(1) { left: 6%; top: 62%; }
+  .fondo span:nth-child(2) { right: 8%; top: 38%; animation-delay: -5s; font-size: 2.2rem; }
+  .fondo span:nth-child(3) { left: 40%; top: 8%; animation-delay: -9s; font-size: 2.6rem; }
+  @keyframes flotar {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(24px, -26px); }
+  }
+
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .app { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 18px 18px 48px; }
+
+  /* Cabecera de la sala */
+  .barra { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .barra h1 { margin: 0; font-family: var(--titulo); font-style: italic; font-size: 1.5rem; }
+  .barra .lado { display: flex; align-items: center; gap: 10px; }
+  .contador {
+    background: var(--noche-2); border: 2px solid var(--piedra); border-radius: 999px;
+    padding: 6px 16px; font-weight: 700;
+  }
+  .btn-sonido {
+    background: transparent; border: 2px solid var(--piedra); border-radius: 999px; padding: 6px 14px;
+  }
+  .btn-sonido:hover { border-color: var(--texto-suave); }
+
+  /* Pantalla de inicio */
+  .inicio { max-width: 620px; margin: 8vh auto 0; text-align: center; }
+  .inicio h1 {
+    font-family: var(--titulo); font-style: italic; font-weight: 700;
+    font-size: clamp(2.6rem, 9vw, 4.4rem); line-height: 1.02; margin: 0 0 18px;
+    text-shadow: 0 0 28px rgba(255, 184, 77, .35);
+  }
+  .inicio p { margin: 0 auto 14px; max-width: 46ch; color: var(--texto-suave); font-size: 1.15rem; }
+  .inicio label { display: block; margin: 26px 0 8px; font-weight: 700; }
+  .inicio input {
+    width: min(100%, 320px); padding: 12px 16px; font: inherit; text-align: center;
+    border-radius: 14px; border: 2px solid var(--piedra); background: var(--noche-2); color: var(--texto);
+  }
+  .boton-grande {
+    display: inline-block; margin-top: 22px; padding: 14px 30px; border: 0; border-radius: 16px;
+    background: var(--vela); color: var(--tinta); font-weight: 800; font-size: 1.15rem;
+    box-shadow: 0 6px 0 #b97d1d; transition: transform .1s, box-shadow .1s;
+  }
+  .boton-grande:active { transform: translateY(4px); box-shadow: 0 2px 0 #b97d1d; }
+
+  /* Sala: puerta + cajas */
+  .sala { display: grid; gap: 28px; align-items: center; }
+  @media (min-width: 880px) { .sala { grid-template-columns: minmax(280px, 380px) 1fr; gap: 56px; } }
+
+  .escena { perspective: 1000px; display: grid; justify-items: center; }
+  .marco {
+    position: relative; width: clamp(210px, 62vw, 320px); aspect-ratio: 3 / 4.3; overflow: hidden;
+    border: 12px solid var(--piedra);
+    border-radius: 50% 50% 6px 6px / 24% 24% 6px 6px;
+    background: #0d0719;
+    box-shadow: 0 0 0 4px #2b1d47, 0 24px 60px rgba(0, 0, 0, .55);
+  }
+  .luz {
+    position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease .3s;
+    background: radial-gradient(circle at 50% 62%, #fffbe0 0%, #ffd97a 38%, #ff9d3d 85%);
+  }
+  .hoja {
+    position: absolute; inset: 0; transform-origin: left center;
+    transition: transform 1.9s cubic-bezier(.5, 0, .2, 1);
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, .28), transparent 30%, transparent 70%, rgba(0, 0, 0, .35)),
+      repeating-linear-gradient(90deg, #6e4327 0 36px, #57331c 36px 39px);
+    display: grid; place-items: center;
+  }
+  .marco.abierta .hoja { transform: rotateY(-108deg); }
+  .marco.abierta .luz { opacity: 1; }
+  .cerraduras { width: 66%; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cerradura {
+    position: relative; aspect-ratio: 1; border-radius: 50%;
+    display: grid; place-items: center;
+    background: #1c1229; border: 4px solid #4a3a66;
+    font-size: clamp(1.2rem, 5.5vw, 1.9rem);
+    transition: box-shadow .5s, border-color .5s;
+  }
+  .cerradura .icono { filter: grayscale(1) brightness(.7); transition: filter .5s; }
+  .cerradura .candado { position: absolute; right: -8px; bottom: -8px; font-size: .62em; }
+  .cerradura.abierta { border-color: var(--c); box-shadow: 0 0 22px var(--c), inset 0 0 14px color-mix(in srgb, var(--c) 40%, transparent); }
+  .cerradura.abierta .icono { filter: none; }
+  .cerradura.recien { animation: latido .8s ease-out; }
+  @keyframes latido { 0% { transform: scale(.7); } 55% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+  .pista { margin: 18px 0 0; text-align: center; color: var(--texto-suave); max-width: 30ch; }
+
+  .cajas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 340px) { .cajas { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .caja { padding: 14px 12px 12px; } .caja .nombre { font-size: 1rem; } }
+  .caja {
+    position: relative; display: grid; gap: 4px; justify-items: start; text-align: left;
+    padding: 18px 16px 16px; border-radius: 10px 10px 18px 18px;
+    background: var(--noche-2); border: 3px solid var(--c); border-top-width: 14px;
+    transition: transform .15s, background .2s;
+  }
+  .caja:hover:not(:disabled) { transform: translateY(-4px) rotate(-1deg); background: #2d1b52; }
+  .caja .icono { font-size: 2.2rem; line-height: 1; }
+  .caja .nombre { font-weight: 800; font-size: 1.15rem; line-height: 1.2; }
+  .caja .estado { color: var(--texto-suave); font-size: .95rem; }
+  .caja:disabled { cursor: default; background: color-mix(in srgb, var(--c) 22%, var(--noche-2)); }
+  .caja:disabled .estado { color: var(--texto); font-weight: 700; }
+
+  /* Ventana de pregunta */
+  .velo {
+    position: fixed; inset: 0; z-index: 10; background: rgba(8, 4, 18, .84);
+    display: grid; place-items: center; padding: 14px; overflow-y: auto;
+  }
+  .panel {
+    width: min(100%, 680px); background: var(--noche-2); border-radius: 20px;
+    border: 3px solid var(--c); border-top-width: 14px; padding: 22px 22px 24px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+  }
+  .panel .cat { margin: 0 0 6px; font-weight: 700; color: var(--c); }
+  .panel h2 { margin: 0 0 18px; font-size: clamp(1.3rem, 4.2vw, 1.7rem); line-height: 1.3; }
+  .opciones { display: grid; gap: 10px; }
+  .opcion {
+    text-align: left; padding: 14px 16px; min-height: 54px; border-radius: 14px;
+    background: #31205a; border: 3px solid transparent; font-weight: 700; font-size: 1.1rem;
+  }
+  .opcion:hover:not(:disabled) { border-color: var(--c); }
+  .opcion:disabled { cursor: default; }
+  .opcion.bien { background: #1f5a33; border-color: var(--bien); }
+  .opcion.mal { background: #6a2330; border-color: var(--mal); animation: temblor .45s; }
+  .opcion.apagada { opacity: .45; }
+  @keyframes temblor {
+    0%, 100% { transform: translateX(0); } 20% { transform: translateX(-9px); }
+    40% { transform: translateX(9px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); }
+  }
+  .resultado { margin-top: 18px; padding: 14px 16px; border-radius: 14px; font-weight: 700; }
+  .resultado.bien { background: rgba(125, 220, 146, .16); border: 2px solid var(--bien); }
+  .resultado.mal { background: rgba(255, 123, 123, .14); border: 2px solid var(--mal); }
+  .resultado .fantasma { display: inline-block; font-size: 1.8rem; vertical-align: middle; animation: susto .6s ease-out; }
+  @keyframes susto { 0% { transform: scale(.2); opacity: 0; } 60% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(1); } }
+  .acciones { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+  .btn {
+    padding: 12px 20px; border-radius: 14px; border: 3px solid var(--piedra); background: transparent; font-weight: 700;
+  }
+  .btn:hover { border-color: var(--texto-suave); }
+  .btn.principal { background: var(--vela); border-color: var(--vela); color: var(--tinta); }
+  .btn.principal:hover { background: #ffc971; }
+
+  /* Final */
+  .final { text-align: center; }
+  .velo.final { background: rgba(8, 4, 18, .5); align-items: end; padding-bottom: 6vh; }
+  .final .panel { border-color: var(--vela); }
+  .final h2 { font-family: var(--titulo); font-style: italic; font-size: clamp(2rem, 7vw, 3rem); margin-bottom: 8px; }
+  .final p { margin: 0 0 8px; color: var(--texto-suave); font-size: 1.15rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+<div class="fondo" aria-hidden="true"><span>👻</span><span>🦇</span><span>🕸️</span></div>
+
+<div class="app">
+
+  <!-- INICIO -->
+  <section class="inicio" id="inicio">
+    <h1>La Caja Embrujada</h1>
+    <p>¡Cuidado! La puerta se ha cerrado y estás atrapado en la sala embrujada.</p>
+    <p>Hay una caja para cada asignatura. Si aciertas una pregunta, el fantasma te da una llave. Con todas las llaves, la puerta se abre y puedes volver a casa.</p>
+    <label for="nombre">¿Cómo te llamas?</label>
+    <input id="nombre" type="text" maxlength="24" autocomplete="off" placeholder="Tu nombre">
+    <div><button class="boton-grande" id="entrar" type="button">Entrar en la sala</button></div>
+  </section>
+
+  <!-- SALA -->
+  <section id="juego" hidden>
+    <div class="barra">
+      <h1>La Caja Embrujada</h1>
+      <div class="lado">
+        <span class="contador" id="contador" aria-live="polite"></span>
+        <button class="btn-sonido" id="sonido" type="button" aria-pressed="false">🔇 Sin sonido</button>
+      </div>
+    </div>
+
+    <div class="sala">
+      <div class="escena">
+        <div class="marco" id="puerta" role="img" aria-label="Puerta cerrada con cerraduras">
+          <div class="luz"></div>
+          <div class="hoja"><div class="cerraduras" id="cerraduras"></div></div>
+        </div>
+        <p class="pista" id="pista">Abre una caja y responde para conseguir su llave.</p>
+      </div>
+      <div class="cajas" id="cajas"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- PREGUNTA -->
+<div class="velo" id="velo" hidden>
+  <div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="pregunta">
+    <p class="cat" id="cat"></p>
+    <h2 id="pregunta" tabindex="-1"></h2>
+    <div class="opciones" id="opciones"></div>
+    <div id="resultado" aria-live="assertive"></div>
+    <div class="acciones" id="acciones"></div>
+  </div>
+</div>
+
+<!-- FINAL -->
+<div class="velo final" id="final" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="final-titulo">
+    <h2 id="final-titulo">¡La puerta se ha abierto!</h2>
+    <p id="final-texto"></p>
+    <p id="final-datos"></p>
+    <div class="acciones" style="justify-content:center">
+      <button class="btn principal" id="otra" type="button">Jugar otra vez</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   BANCO DE PREGUNTAS · La Caja Embrujada (3.º de primaria)
+
+   Cómo editarlo:
+   - Cada pregunta es una lista de 5 textos entre corchetes:
+       ["Pregunta", "RESPUESTA CORRECTA", "falsa 1", "falsa 2", "falsa 3"]
+   - La respuesta correcta va SIEMPRE la primera (en el juego
+     las opciones se barajan solas, no aparecen en este orden).
+   - Para añadir una pregunta, copia una línea y cámbiala.
+   - Puedes tener las que quieras por categoría; cuantas más,
+     menos se repiten.
+   - Si añades o quitas una categoría entera, el número de llaves
+     necesarias se ajusta solo (una por categoría).
+   ============================================================ */
+
+window.CATEGORIAS = [
+  {
+    id: "mates",
+    nombre: "Matemáticas",
+    icono: "➕",
+    color: "#ffb84d",
+    preguntas: [
+      ["¿Cuánto es 6 × 7?", "42", "36", "48", "49"],
+      ["¿Cuánto es 9 × 5?", "45", "40", "54", "35"],
+      ["¿Cuánto es 56 ÷ 8?", "7", "6", "8", "9"],
+      ["¿Cuánto es 72 ÷ 9?", "8", "7", "9", "6"],
+      ["¿Cuánto es 345 + 278?", "623", "613", "523", "633"],
+      ["¿Cuánto es 500 − 237?", "263", "273", "337", "363"],
+      ["¿Cuántos centímetros hay en 1 metro?", "100", "10", "1.000", "50"],
+      ["¿Cuántos gramos hay en 1 kilogramo?", "1.000", "100", "10", "10.000"],
+      ["¿Cuál es la mitad de 36?", "18", "16", "12", "20"],
+      ["¿Cuántos lados tiene un hexágono?", "6", "5", "8", "4"],
+      ["Hay 3 bolsas con 8 caramelos cada una. ¿Cuántos caramelos hay en total?", "24", "11", "21", "32"],
+      ["¿Qué número tiene 4 centenas, 2 decenas y 5 unidades?", "425", "524", "452", "245"],
+      ["¿Cuántos minutos tiene una hora?", "60", "30", "100", "24"],
+      ["Una pizza está dividida en 4 trozos iguales y te comes 1. ¿Qué fracción de la pizza te has comido?", "1/4", "1/2", "4/1", "3/4"]
+    ]
+  },
+  {
+    id: "ingles",
+    nombre: "Inglés",
+    icono: "💬",
+    color: "#6ec6ff",
+    preguntas: [
+      ["How do you say “gato” in English?", "cat", "dog", "bird", "fish"],
+      ["What colour is the sun?", "yellow", "blue", "green", "purple"],
+      ["What is “red” in Spanish?", "rojo", "azul", "verde", "amarillo"],
+      ["¿Qué número es “twelve”?", "12", "2", "20", "10"],
+      ["What does “mother” mean in Spanish?", "madre", "padre", "hermana", "abuela"],
+      ["Complete: I ___ nine years old.", "am", "is", "are", "be"],
+      ["Which day comes after Monday?", "Tuesday", "Sunday", "Friday", "Wednesday"],
+      ["Which one is a fruit?", "apple", "chair", "pencil", "door"],
+      ["What does “nose” mean?", "nariz", "boca", "oreja", "ojo"],
+      ["“It’s raining” means…", "Está lloviendo", "Hace sol", "Está nevando", "Hace viento"],
+      ["What is the plural of “book”?", "books", "bookes", "bookis", "book"],
+      ["Choose the right answer: What’s your name?", "My name is Ana.", "I am nine.", "I like pizza.", "It is red."],
+      ["How many legs does a spider have?", "eight", "six", "four", "ten"],
+      ["Which animal can fly?", "bird", "fish", "cow", "snake"]
+    ]
+  },
+  {
+    id: "medio",
+    nombre: "Conocimiento del medio",
+    icono: "🌿",
+    color: "#7ddc92",
+    preguntas: [
+      ["¿Qué órgano bombea la sangre por todo el cuerpo?", "El corazón", "Los pulmones", "El estómago", "El cerebro"],
+      ["¿Cuántos sentidos tenemos las personas?", "5", "3", "4", "6"],
+      ["¿Cómo está el agua cuando es hielo?", "Sólida", "Líquida", "Gaseosa", "Ninguna de las anteriores"],
+      ["¿Cuál de estos animales es un mamífero?", "El delfín", "El tiburón", "El atún", "El pulpo"],
+      ["¿En qué contenedor se tira el papel y el cartón?", "Azul", "Amarillo", "Verde", "Rojo"],
+      ["¿Qué necesitan las plantas para vivir?", "Luz, agua y aire", "Solo oscuridad", "Solo hielo", "Solo piedras"],
+      ["¿Cuál es la isla más grande de Canarias?", "Tenerife", "Gran Canaria", "Lanzarote", "La Palma"],
+      ["¿Cómo se llama el volcán más alto de España?", "El Teide", "El Etna", "El Vesubio", "La Cumbre Vieja"],
+      ["¿Qué astro nos da luz y calor?", "El Sol", "La Luna", "Marte", "Una estrella fugaz"],
+      ["¿Cuál de estos animales es invertebrado?", "El caracol", "El gato", "La lagartija", "La gallina"],
+      ["¿Qué hueso protege el cerebro?", "El cráneo", "El fémur", "La costilla", "La columna"],
+      ["¿Cuál de estos alimentos es de origen vegetal?", "Las lentejas", "La leche", "El huevo", "El jamón"],
+      ["¿Cómo se llama el planeta en el que vivimos?", "Tierra", "Júpiter", "Marte", "Venus"],
+      ["¿Qué parte de la planta absorbe el agua del suelo?", "La raíz", "La hoja", "La flor", "El fruto"]
+    ]
+  },
+  {
+    id: "lengua",
+    nombre: "Lengua",
+    icono: "📖",
+    color: "#ff8fb8",
+    preguntas: [
+      ["¿Cuál es el antónimo (el contrario) de “alto”?", "bajo", "grande", "fuerte", "largo"],
+      ["¿Cuál es el contrario de “día”?", "noche", "tarde", "mañana", "hoy"],
+      ["¿Qué palabra significa lo mismo que “contento”?", "alegre", "triste", "enfadado", "cansado"],
+      ["¿Cuál es el plural de “lápiz”?", "lápices", "lápizes", "lápizs", "lápiz"],
+      ["¿Cuántas sílabas tiene “mariposa”?", "4", "3", "5", "2"],
+      ["¿Cuál de estas palabras es un sustantivo?", "gato", "correr", "bonito", "rápidamente"],
+      ["¿Cuál de estas palabras es un verbo?", "saltar", "mesa", "azul", "pequeño"],
+      ["En “La casa grande”, ¿cuál es el adjetivo?", "grande", "casa", "La", "casa grande"],
+      ["¿Con qué tipo de letra empieza una oración?", "Con mayúscula", "Con minúscula", "Con un número", "Con un punto"],
+      ["¿Cuál está bien escrita?", "hormiga", "ormiga", "hormigua", "ormigua"],
+      ["¿Cuál está bien escrita?", "canción", "cancion", "cáncion", "cancíon"],
+      ["Completa: Ayer Ana ___ al parque.", "fue", "va", "irá", "ir"],
+      ["¿Cuál es el femenino de “niño”?", "niña", "niños", "niñito", "niño"],
+      ["¿Qué frase tiene sentido?", "El perro ladra mucho.", "Mucho ladra perro el.", "Ladra el mucho perro.", "Perro mucho el ladra."],
+      ["¿Cuántas letras tiene el abecedario español?", "27", "26", "28", "25"]
+    ]
+  }
+];
+
+</script>
+<script>
+(function () {
+  "use strict";
+
+  var CATS = window.CATEGORIAS || [];
+  var TOTAL = CATS.length;
+
+  var estado = { nombre: "", llaves: {}, aciertos: 0, fallos: 0, colas: {}, cat: null, sonido: false, ultimaCaja: null };
+  var $ = function (s) { return document.querySelector(s); };
+
+  function barajar(lista) {
+    var a = lista.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function escapar(t) {
+    return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+  }
+  function numLlaves() { return Object.keys(estado.llaves).length; }
+
+  /* ---------- Sonido (apagado por defecto) ---------- */
+  var ac = null;
+  function tonos(frecuencias, dur, tipo) {
+    if (!estado.sonido) return;
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      var t0 = ac.currentTime;
+      frecuencias.forEach(function (f, i) {
+        var o = ac.createOscillator(), g = ac.createGain();
+        o.type = tipo || "sine"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t0 + i * dur);
+        g.gain.exponentialRampToValueAtTime(0.16, t0 + i * dur + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + (i + 1) * dur);
+        o.connect(g); g.connect(ac.destination);
+        o.start(t0 + i * dur); o.stop(t0 + (i + 1) * dur + 0.03);
+      });
+    } catch (e) { /* sin audio, no pasa nada */ }
+  }
+
+  /* ---------- Sala ---------- */
+  function pintarSala() {
+    $("#cerraduras").innerHTML = CATS.map(function (c) {
+      var abierta = !!estado.llaves[c.id];
+      return '<div class="cerradura' + (abierta ? " abierta" : "") + '" data-id="' + c.id + '" style="--c:' + c.color + '"' +
+        ' title="' + escapar(c.nombre) + (abierta ? ": llave conseguida" : ": falta la llave") + '">' +
+        '<span class="icono" aria-hidden="true">' + c.icono + '</span>' +
+        '<span class="candado" aria-hidden="true">' + (abierta ? "🗝️" : "🔒") + '</span></div>';
+    }).join("");
+
+    $("#cajas").innerHTML = CATS.map(function (c) {
+      var tiene = !!estado.llaves[c.id];
+      return '<button class="caja" type="button" data-id="' + c.id + '" style="--c:' + c.color + '"' + (tiene ? " disabled" : "") + '>' +
+        '<span class="icono" aria-hidden="true">' + c.icono + '</span>' +
+        '<span class="nombre">' + escapar(c.nombre) + '</span>' +
+        '<span class="estado">' + (tiene ? "🗝️ Llave conseguida" : "Abrir la caja") + '</span></button>';
+    }).join("");
+
+    var n = numLlaves();
+    $("#contador").textContent = "🗝️ " + n + " de " + TOTAL + " llaves";
+    var resta = TOTAL - n;
+    $("#pista").textContent = resta === 0 ? "¡Tienes todas las llaves!" :
+      (resta === 1 ? "Solo te falta 1 llave." : "Te faltan " + resta + " llaves.");
+  }
+
+  /* ---------- Preguntas ---------- */
+  function siguiente(cat) {
+    if (!estado.colas[cat.id] || !estado.colas[cat.id].length) {
+      estado.colas[cat.id] = barajar(cat.preguntas.map(function (_, i) { return i; }));
+    }
+    return cat.preguntas[estado.colas[cat.id].pop()];
+  }
+
+  function abrirPregunta(id) {
+    var cat = CATS.filter(function (c) { return c.id === id; })[0];
+    if (!cat) return;
+    estado.cat = cat;
+    var item = siguiente(cat);
+    var correcta = item[1];
+    var opciones = barajar(item.slice(1)).map(function (t) { return { t: t, ok: t === correcta }; });
+
+    $("#panel").style.setProperty("--c", cat.color);
+    $("#cat").textContent = cat.icono + " " + cat.nombre;
+    $("#pregunta").textContent = item[0];
+    $("#resultado").innerHTML = "";
+    $("#acciones").innerHTML = "";
+    $("#opciones").innerHTML = "";
+
+    opciones.forEach(function (o) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "opcion"; b.textContent = o.t;
+      b.addEventListener("click", function () { responder(b, o, opciones, correcta); });
+      $("#opciones").appendChild(b);
+    });
+
+    $("#velo").hidden = false;
+    document.body.style.overflow = "hidden";
+    $("#pregunta").focus();
+  }
+
+  function responder(boton, elegida, opciones, correcta) {
+    var botones = $("#opciones").children;
+    for (var i = 0; i < botones.length; i++) {
+      botones[i].disabled = true;
+      if (opciones[i].ok) botones[i].classList.add("bien");
+      else if (botones[i] !== boton) botones[i].classList.add("apagada");
+    }
+    var res = $("#resultado"), acc = $("#acciones");
+
+    if (elegida.ok) {
+      estado.aciertos++;
+      estado.llaves[estado.cat.id] = true;
+      tonos([523, 659, 784], 0.13);
+      res.className = "resultado bien";
+      res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto! Has conseguido la llave de ' + escapar(estado.cat.nombre) + '.';
+      acc.innerHTML = '<button class="btn principal" type="button" id="coger">Coger la llave</button>';
+      $("#coger").addEventListener("click", function () { cerrarPregunta(true); });
+      $("#coger").focus();
+    } else {
+      boton.classList.add("mal");
+      estado.fallos++;
+      tonos([233, 165], 0.22, "sawtooth");
+      res.className = "resultado mal";
+      res.innerHTML = '<span class="fantasma" aria-hidden="true">👻</span> ¡Uuuuh! Esa no era. La respuesta correcta era: <em>' + escapar(correcta) + '</em>';
+      acc.innerHTML =
+        '<button class="btn principal" type="button" id="otra-preg">Probar con otra pregunta</button>' +
+        '<button class="btn" type="button" id="volver">Volver a la sala</button>';
+      $("#otra-preg").addEventListener("click", function () { abrirPregunta(estado.cat.id); });
+      $("#volver").addEventListener("click", function () { cerrarPregunta(false); });
+      $("#otra-preg").focus();
+    }
+  }
+
+  function cerrarPregunta(conseguida) {
+    var id = estado.cat && estado.cat.id;
+    $("#velo").hidden = true;
+    document.body.style.overflow = "";
+    pintarSala();
+    if (conseguida && id) {
+      var el = document.querySelector('.cerradura[data-id="' + id + '"]');
+      if (el) el.classList.add("recien");
+      if (numLlaves() === TOTAL) {
+        $("#puerta").scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(abrirPuerta, 900);
+        return;
+      }
+    }
+    var siguienteCaja = document.querySelector(".caja:not(:disabled)");
+    if (siguienteCaja) siguienteCaja.focus();
+  }
+
+  /* ---------- Final ---------- */
+  function abrirPuerta() {
+    $("#puerta").classList.add("abierta");
+    $("#puerta").setAttribute("aria-label", "Puerta abierta");
+    tonos([523, 659, 784, 1047, 1319], 0.16);
+    setTimeout(function () {
+      var quien = estado.nombre ? ", " + estado.nombre : "";
+      $("#final-texto").textContent = "¡Lo has conseguido" + quien + "! Has escapado de la sala embrujada y ya puedes volver a casa.";
+      $("#final-datos").textContent = "Respuestas acertadas: " + estado.aciertos + ". Fantasmas que te han asustado: " + estado.fallos + ".";
+      $("#final").hidden = false;
+      document.body.style.overflow = "hidden";
+      $("#otra").focus();
+    }, 2300);
+  }
+
+  function reiniciar() {
+    estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0; estado.colas = {}; estado.cat = null;
+    $("#final").hidden = true;
+    document.body.style.overflow = "";
+    $("#puerta").classList.remove("abierta");
+    $("#puerta").setAttribute("aria-label", "Puerta cerrada con cerraduras");
+    pintarSala();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /* ---------- Eventos ---------- */
+  function empezar() {
+    estado.nombre = $("#nombre").value.trim();
+    $("#inicio").hidden = true;
+    $("#juego").hidden = false;
+    pintarSala();
+    var c = document.querySelector(".caja");
+    if (c) c.focus();
+  }
+  $("#entrar").addEventListener("click", empezar);
+  $("#nombre").addEventListener("keydown", function (e) { if (e.key === "Enter") empezar(); });
+  $("#cajas").addEventListener("click", function (e) {
+    var b = e.target.closest(".caja");
+    if (b && !b.disabled) abrirPregunta(b.getAttribute("data-id"));
+  });
+  $("#otra").addEventListener("click", reiniciar);
+  $("#sonido").addEventListener("click", function () {
+    estado.sonido = !estado.sonido;
+    this.textContent = estado.sonido ? "🔊 Con sonido" : "🔇 Sin sonido";
+    this.setAttribute("aria-pressed", String(estado.sonido));
+    tonos([660], 0.1);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !$("#velo").hidden) cerrarPregunta(!!(estado.cat && estado.llaves[estado.cat.id] && $("#coger")));
+  });
+})();
+</script>
+</body>
+</html>
