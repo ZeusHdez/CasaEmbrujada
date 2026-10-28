@@ -542,13 +542,22 @@
   var LETRAS = ["A", "B", "C", "D", "E", "F"];
   var MOVIMIENTO = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  var estado = { nombre: "", llaves: {}, aciertos: 0, fallos: 0, colas: {}, cat: null, sonido: false, escapando: false };
+  var estado = { nombre: "", llaves: {}, aciertos: 0, fallos: 0, vistas: {}, ultimaPos: -1, cat: null, sonido: false, escapando: false };
   var $ = function (s) { return document.querySelector(s); };
 
+  // Número entero al azar entre 0 y n-1 (usa el generador criptográfico si existe)
+  function azarEntero(n) {
+    if (window.crypto && window.crypto.getRandomValues) {
+      var a = new Uint32Array(1);
+      window.crypto.getRandomValues(a);
+      return a[0] % n;
+    }
+    return Math.floor(Math.random() * n);
+  }
   function barajar(lista) {
     var a = lista.slice();
     for (var i = a.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
+      var j = azarEntero(i + 1);
       var t = a[i]; a[i] = a[j]; a[j] = t;
     }
     return a;
@@ -613,7 +622,6 @@
       return;
     }
     CATS = r.cats; TOTAL = CATS.length;
-    estado.colas = {};
     $("#entrar").disabled = false;
     $("#entrar").textContent = "Entrar en la casa";
     if (r.avisos.length) mostrarCarga("aviso", "<strong>Algunas preguntas tienen fallos:</strong><ul><li>" + r.avisos.map(escapar).join("</li><li>") + "</li></ul>");
@@ -853,11 +861,40 @@
   }
 
   /* ---------- Preguntas ---------- */
+  /* Las preguntas ya vistas se recuerdan en este navegador (entre partidas y
+     aunque se recargue la página), así no se repite ninguna hasta que hayan
+     salido todas las de su asignatura. Al empezar otra vuelta, las que salieron
+     hace poco esperan a que salgan antes las demás. */
+  var MEMORIA = "cajaEmbrujada.vistas";
+  try { estado.vistas = JSON.parse(localStorage.getItem(MEMORIA)) || {}; } catch (e) { estado.vistas = {}; }
+  function clave(item) { return item[0] + "|" + item[1]; }
+
   function siguiente(cat) {
-    if (!estado.colas[cat.id] || !estado.colas[cat.id].length) {
-      estado.colas[cat.id] = barajar(cat.preguntas.map(function (_, i) { return i; }));
+    var existentes = cat.preguntas.map(clave);
+    // Olvida las preguntas que ya no están en preguntas.json
+    var vistas = (estado.vistas[cat.id] || []).filter(function (k) { return existentes.indexOf(k) !== -1; });
+    var libres = cat.preguntas.filter(function (p) { return vistas.indexOf(clave(p)) === -1; });
+    if (!libres.length) {
+      var recientes = Math.floor(cat.preguntas.length / 3);
+      vistas = recientes > 0 ? vistas.slice(-recientes) : [];
+      libres = cat.preguntas.filter(function (p) { return vistas.indexOf(clave(p)) === -1; });
     }
-    return cat.preguntas[estado.colas[cat.id].pop()];
+    var item = libres[azarEntero(libres.length)];
+    vistas.push(clave(item));
+    estado.vistas[cat.id] = vistas;
+    try { localStorage.setItem(MEMORIA, JSON.stringify(estado.vistas)); } catch (e) { /* sin memoria, no pasa nada */ }
+    return item;
+  }
+
+  // Baraja las opciones evitando que la correcta caiga en la misma letra que la pregunta anterior
+  function barajarOpciones(item) {
+    var correcta = item[1], opciones, pos, intentos = 0;
+    do {
+      opciones = barajar(item.slice(1)).map(function (t) { return { t: t, ok: t === correcta }; });
+      for (pos = 0; !opciones[pos].ok; pos++) { /* busca la correcta */ }
+    } while (pos === estado.ultimaPos && opciones.length > 1 && ++intentos < 10);
+    estado.ultimaPos = pos;
+    return opciones;
   }
 
   function abrirPregunta(id) {
@@ -866,7 +903,7 @@
     estado.cat = cat;
     var item = siguiente(cat);
     var correcta = item[1];
-    var opciones = barajar(item.slice(1)).map(function (t) { return { t: t, ok: t === correcta }; });
+    var opciones = barajarOpciones(item);
 
     var panel = $("#panel");
     panel.style.setProperty("--c", cat.color);
@@ -1022,7 +1059,7 @@
   }
 
   function reiniciar() {
-    estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0; estado.colas = {}; estado.cat = null; estado.escapando = false;
+    estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0; estado.cat = null; estado.escapando = false;
     $("#final").hidden = true;
     $("#confeti").innerHTML = "";
     document.body.style.overflow = "";
