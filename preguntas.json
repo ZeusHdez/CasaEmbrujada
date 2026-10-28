@@ -1,0 +1,93 @@
+{
+  "categorias": [
+    {
+      "id": "mates",
+      "nombre": "Matemáticas",
+      "icono": "➕",
+      "color": "#ffb84d",
+      "preguntas": [
+        { "pregunta": "¿Cuánto es 6 × 7?", "correcta": "42", "incorrectas": ["36", "48", "49"] },
+        { "pregunta": "¿Cuánto es 9 × 5?", "correcta": "45", "incorrectas": ["40", "54", "35"] },
+        { "pregunta": "¿Cuánto es 56 ÷ 8?", "correcta": "7", "incorrectas": ["6", "8", "9"] },
+        { "pregunta": "¿Cuánto es 72 ÷ 9?", "correcta": "8", "incorrectas": ["7", "9", "6"] },
+        { "pregunta": "¿Cuánto es 345 + 278?", "correcta": "623", "incorrectas": ["613", "523", "633"] },
+        { "pregunta": "¿Cuánto es 500 − 237?", "correcta": "263", "incorrectas": ["273", "337", "363"] },
+        { "pregunta": "¿Cuántos centímetros hay en 1 metro?", "correcta": "100", "incorrectas": ["10", "1.000", "50"] },
+        { "pregunta": "¿Cuántos gramos hay en 1 kilogramo?", "correcta": "1.000", "incorrectas": ["100", "10", "10.000"] },
+        { "pregunta": "¿Cuál es la mitad de 36?", "correcta": "18", "incorrectas": ["16", "12", "20"] },
+        { "pregunta": "¿Cuántos lados tiene un hexágono?", "correcta": "6", "incorrectas": ["5", "8", "4"] },
+        { "pregunta": "Hay 3 bolsas con 8 caramelos cada una. ¿Cuántos caramelos hay en total?", "correcta": "24", "incorrectas": ["11", "21", "32"] },
+        { "pregunta": "¿Qué número tiene 4 centenas, 2 decenas y 5 unidades?", "correcta": "425", "incorrectas": ["524", "452", "245"] },
+        { "pregunta": "¿Cuántos minutos tiene una hora?", "correcta": "60", "incorrectas": ["30", "100", "24"] },
+        { "pregunta": "Una pizza está dividida en 4 trozos iguales y te comes 1. ¿Qué fracción de la pizza te has comido?", "correcta": "1/4", "incorrectas": ["1/2", "4/1", "3/4"] }
+      ]
+    },
+    {
+      "id": "ingles",
+      "nombre": "Inglés",
+      "icono": "💬",
+      "color": "#6ec6ff",
+      "preguntas": [
+        { "pregunta": "How do you say “gato” in English?", "correcta": "cat", "incorrectas": ["dog", "bird", "fish"] },
+        { "pregunta": "What colour is the sun?", "correcta": "yellow", "incorrectas": ["blue", "green", "purple"] },
+        { "pregunta": "What is “red” in Spanish?", "correcta": "rojo", "incorrectas": ["azul", "verde", "amarillo"] },
+        { "pregunta": "¿Qué número es “twelve”?", "correcta": "12", "incorrectas": ["2", "20", "10"] },
+        { "pregunta": "What does “mother” mean in Spanish?", "correcta": "madre", "incorrectas": ["padre", "hermana", "abuela"] },
+        { "pregunta": "Complete: I ___ nine years old.", "correcta": "am", "incorrectas": ["is", "are", "be"] },
+        { "pregunta": "Which day comes after Monday?", "correcta": "Tuesday", "incorrectas": ["Sunday", "Friday", "Wednesday"] },
+        { "pregunta": "Which one is a fruit?", "correcta": "apple", "incorrectas": ["chair", "pencil", "door"] },
+        { "pregunta": "What does “nose” mean?", "correcta": "nariz", "incorrectas": ["boca", "oreja", "ojo"] },
+        { "pregunta": "“It’s raining” means…", "correcta": "Está lloviendo", "incorrectas": ["Hace sol", "Está nevando", "Hace viento"] },
+        { "pregunta": "What is the plural of “book”?", "correcta": "books", "incorrectas": ["bookes", "bookis", "book"] },
+        { "pregunta": "Choose the right answer: What’s your name?", "correcta": "My name is Ana.", "incorrectas": ["I am nine.", "I like pizza.", "It is red."] },
+        { "pregunta": "How many legs does a spider have?", "correcta": "eight", "incorrectas": ["six", "four", "ten"] },
+        { "pregunta": "Which animal can fly?", "correcta": "bird", "incorrectas": ["fish", "cow", "snake"] }
+      ]
+    },
+    {
+      "id": "medio",
+      "nombre": "Conocimiento del medio",
+      "icono": "🌿",
+      "color": "#7ddc92",
+      "preguntas": [
+        { "pregunta": "¿Qué órgano bombea la sangre por todo el cuerpo?", "correcta": "El corazón", "incorrectas": ["Los pulmones", "El estómago", "El cerebro"] },
+        { "pregunta": "¿Cuántos sentidos tenemos las personas?", "correcta": "5", "incorrectas": ["3", "4", "6"] },
+        { "pregunta": "¿Cómo está el agua cuando es hielo?", "correcta": "Sólida", "incorrectas": ["Líquida", "Gaseosa", "Ninguna de las anteriores"] },
+        { "pregunta": "¿Cuál de estos animales es un mamífero?", "correcta": "El delfín", "incorrectas": ["El tiburón", "El atún", "El pulpo"] },
+        { "pregunta": "¿En qué contenedor se tira el papel y el cartón?", "correcta": "Azul", "incorrectas": ["Amarillo", "Verde", "Rojo"] },
+        { "pregunta": "¿Qué necesitan las plantas para vivir?", "correcta": "Luz, agua y aire", "incorrectas": ["Solo oscuridad", "Solo hielo", "Solo piedras"] },
+        { "pregunta": "¿Cuál es la isla más grande de Canarias?", "correcta": "Tenerife", "incorrectas": ["Gran Canaria", "Lanzarote", "La Palma"] },
+        { "pregunta": "¿Cómo se llama el volcán más alto de España?", "correcta": "El Teide", "incorrectas": ["El Etna", "El Vesubio", "La Cumbre Vieja"] },
+        { "pregunta": "¿Qué astro nos da luz y calor?", "correcta": "El Sol", "incorrectas": ["La Luna", "Marte", "Una estrella fugaz"] },
+        { "pregunta": "¿Cuál de estos animales es invertebrado?", "correcta": "El caracol", "incorrectas": ["El gato", "La lagartija", "La gallina"] },
+        { "pregunta": "¿Qué hueso protege el cerebro?", "correcta": "El cráneo", "incorrectas": ["El fémur", "La costilla", "La columna"] },
+        { "pregunta": "¿Cuál de estos alimentos es de origen vegetal?", "correcta": "Las lentejas", "incorrectas": ["La leche", "El huevo", "El jamón"] },
+        { "pregunta": "¿Cómo se llama el planeta en el que vivimos?", "correcta": "Tierra", "incorrectas": ["Júpiter", "Marte", "Venus"] },
+        { "pregunta": "¿Qué parte de la planta absorbe el agua del suelo?", "correcta": "La raíz", "incorrectas": ["La hoja", "La flor", "El fruto"] }
+      ]
+    },
+    {
+      "id": "lengua",
+      "nombre": "Lengua",
+      "icono": "📖",
+      "color": "#ff8fb8",
+      "preguntas": [
+        { "pregunta": "¿Cuál es el antónimo (el contrario) de “alto”?", "correcta": "bajo", "incorrectas": ["grande", "fuerte", "largo"] },
+        { "pregunta": "¿Cuál es el contrario de “día”?", "correcta": "noche", "incorrectas": ["tarde", "mañana", "hoy"] },
+        { "pregunta": "¿Qué palabra significa lo mismo que “contento”?", "correcta": "alegre", "incorrectas": ["triste", "enfadado", "cansado"] },
+        { "pregunta": "¿Cuál es el plural de “lápiz”?", "correcta": "lápices", "incorrectas": ["lápizes", "lápizs", "lápiz"] },
+        { "pregunta": "¿Cuántas sílabas tiene “mariposa”?", "correcta": "4", "incorrectas": ["3", "5", "2"] },
+        { "pregunta": "¿Cuál de estas palabras es un sustantivo?", "correcta": "gato", "incorrectas": ["correr", "bonito", "rápidamente"] },
+        { "pregunta": "¿Cuál de estas palabras es un verbo?", "correcta": "saltar", "incorrectas": ["mesa", "azul", "pequeño"] },
+        { "pregunta": "En “La casa grande”, ¿cuál es el adjetivo?", "correcta": "grande", "incorrectas": ["casa", "La", "casa grande"] },
+        { "pregunta": "¿Con qué tipo de letra empieza una oración?", "correcta": "Con mayúscula", "incorrectas": ["Con minúscula", "Con un número", "Con un punto"] },
+        { "pregunta": "¿Cuál está bien escrita?", "correcta": "hormiga", "incorrectas": ["ormiga", "hormigua", "ormigua"] },
+        { "pregunta": "¿Cuál está bien escrita?", "correcta": "canción", "incorrectas": ["cancion", "cáncion", "cancíon"] },
+        { "pregunta": "Completa: Ayer Ana ___ al parque.", "correcta": "fue", "incorrectas": ["va", "irá", "ir"] },
+        { "pregunta": "¿Cuál es el femenino de “niño”?", "correcta": "niña", "incorrectas": ["niños", "niñito", "niño"] },
+        { "pregunta": "¿Qué frase tiene sentido?", "correcta": "El perro ladra mucho.", "incorrectas": ["Mucho ladra perro el.", "Ladra el mucho perro.", "Perro mucho el ladra."] },
+        { "pregunta": "¿Cuántas letras tiene el abecedario español?", "correcta": "27", "incorrectas": ["26", "28", "25"] }
+      ]
+    }
+  ]
+}

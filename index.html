@@ -35,22 +35,58 @@
   button { font: inherit; color: inherit; cursor: pointer; }
   :focus-visible { outline: 3px solid var(--vela); outline-offset: 3px; }
 
-  /* Fantasmas de fondo (muy suaves) */
-  .fondo { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-  .fondo span { position: absolute; font-size: 3rem; opacity: .12; animation: flotar 14s ease-in-out infinite; }
-  .fondo span:nth-child(1) { left: 6%; top: 70%; }
-  .fondo span:nth-child(2) { right: 8%; top: 12%; animation-delay: -5s; font-size: 2.2rem; }
-  .fondo span:nth-child(3) { left: 28%; top: 6%; animation-delay: -9s; font-size: 2.6rem; }
-  .fondo span:nth-child(4) { right: 22%; top: 80%; animation-delay: -3s; font-size: 2.4rem; }
+  /* ---------- Fondo: luna, fantasmas, murciélagos, niebla ---------- */
+  .fondo { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .fondo .flota { position: absolute; font-size: 3rem; opacity: .12; animation: flotar 14s ease-in-out infinite; }
+  .fondo .flota:nth-child(2) { left: 6%; top: 70%; }
+  .fondo .flota:nth-child(3) { right: 8%; top: 18%; animation-delay: -5s; font-size: 2.2rem; }
+  .fondo .flota:nth-child(4) { left: 30%; top: 4%; animation-delay: -9s; font-size: 2.6rem; }
+  .fondo .flota:nth-child(5) { right: 22%; top: 80%; animation-delay: -3s; font-size: 2.4rem; }
   @keyframes flotar {
     0%, 100% { transform: translate(0, 0); }
     50% { transform: translate(24px, -26px); }
   }
+  .luna {
+    position: absolute; top: 5%; left: 3%; width: clamp(60px, 9vw, 140px); aspect-ratio: 1; border-radius: 50%;
+    background: radial-gradient(circle at 38% 36%, #fffbe6 0%, #f6e7a8 45%, #d9c072 100%);
+    box-shadow: 0 0 40px 10px rgba(255, 240, 180, .25), 0 0 120px 40px rgba(255, 240, 180, .1);
+    opacity: .85;
+  }
+  .luna::after {
+    content: ""; position: absolute; width: 22%; height: 22%; left: 52%; top: 50%; border-radius: 50%;
+    background: rgba(160, 130, 60, .25);
+  }
+  .cielo { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+  .murcielago-vuelo { position: absolute; left: 0; font-size: clamp(1.6rem, 3vw, 2.6rem); animation: cruzar 7s linear forwards; }
+  .murcielago-vuelo span { display: inline-block; animation: aletear .25s ease-in-out infinite alternate; }
+  @keyframes cruzar {
+    0% { transform: translate(-10vw, 0); }
+    25% { transform: translate(25vw, -6vh); }
+    50% { transform: translate(55vw, 4vh); }
+    75% { transform: translate(80vw, -5vh); }
+    100% { transform: translate(115vw, 2vh); }
+  }
+  .murcielago-vuelo.al-reves { animation-direction: reverse; }
+  @keyframes aletear { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
+  .niebla {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 18vh; pointer-events: none; z-index: 2; opacity: .3;
+    background:
+      radial-gradient(ellipse 30% 60% at 20% 100%, #cfc3ff 0%, transparent 70%),
+      radial-gradient(ellipse 35% 70% at 60% 100%, #cfc3ff 0%, transparent 70%),
+      radial-gradient(ellipse 25% 50% at 95% 100%, #cfc3ff 0%, transparent 70%);
+    background-size: 200% 100%;
+    animation: niebla 22s ease-in-out infinite alternate;
+    filter: blur(8px);
+  }
+  @keyframes niebla { from { background-position: 0 0; } to { background-position: -50% 0; } }
+  .relampago { position: fixed; inset: 0; z-index: 30; pointer-events: none; background: #eef0ff; opacity: 0; }
+  .relampago.flash { animation: flash 1.1s ease-out; }
+  @keyframes flash { 0% { opacity: 0; } 4% { opacity: .8; } 9% { opacity: .1; } 15% { opacity: .65; } 35% { opacity: 0; } 100% { opacity: 0; } }
 
   :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
   .app { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 16px 16px 40px; }
 
-  /* Cabecera de la sala */
+  /* ---------- Cabecera de la sala ---------- */
   .barra { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
   .barra h1 { margin: 0; font-family: var(--titulo); font-style: italic; font-size: 1.5rem; }
   .barra .lado { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -64,13 +100,15 @@
   .btn-sonido:hover { border-color: var(--texto-suave); }
   .btn-sonido[aria-pressed="true"] { border-color: var(--vela); color: var(--vela); }
 
-  /* Pantalla de inicio */
+  /* ---------- Pantalla de inicio ---------- */
   .inicio { max-width: 640px; margin: 8vh auto 0; text-align: center; }
   .inicio h1 {
     font-family: var(--titulo); font-style: italic; font-weight: 700;
     font-size: clamp(2.6rem, 9vw, 4.8rem); line-height: 1.02; margin: 0 0 18px;
     text-shadow: 0 0 28px rgba(255, 184, 77, .35);
+    animation: titilar 5s infinite;
   }
+  @keyframes titilar { 0%, 90%, 100% { opacity: 1; } 92% { opacity: .5; } 94% { opacity: 1; } 96% { opacity: .7; } }
   .inicio p { margin: 0 auto 14px; max-width: 46ch; color: var(--texto-suave); font-size: 1.2rem; }
   .inicio label { display: block; margin: 26px 0 8px; font-weight: 700; }
   .inicio input {
@@ -83,8 +121,14 @@
     box-shadow: 0 6px 0 #b97d1d; transition: transform .1s, box-shadow .1s;
   }
   .boton-grande:active { transform: translateY(4px); box-shadow: 0 2px 0 #b97d1d; }
+  .boton-grande:disabled { opacity: .5; cursor: wait; }
+  .carga { margin: 18px auto 0; max-width: 52ch; padding: 12px 16px; border-radius: 14px; text-align: left; font-size: 1rem; }
+  .carga.error { background: rgba(255, 123, 123, .12); border: 2px solid var(--mal); }
+  .carga.aviso { background: rgba(255, 184, 77, .1); border: 2px solid var(--vela); }
+  .carga ul { margin: 6px 0 0; padding-left: 20px; }
+  .carga .btn { margin-top: 10px; }
 
-  /* Sala: ventanas · puerta · ventanas */
+  /* ---------- Sala: ventanas · puerta · ventanas ---------- */
   .sala {
     display: grid; gap: 22px 16px; align-items: center;
     grid-template-columns: 1fr 1fr;
@@ -97,8 +141,9 @@
     .sala { grid-template-columns: 1fr auto 1fr; grid-template-areas: "izq puerta der"; gap: 40px; }
   }
 
-  /* La casa por fuera: tejado, fachada y suelo */
+  /* ---------- La casa por fuera: tejado, fachada y suelo ---------- */
   .casa { position: relative; margin: 0 3%; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .5)); }
+  .casa.atravesar { transition: transform 1.5s cubic-bezier(.6, 0, .9, .4); transform: scale(9); }
   .tejado-zona { position: relative; height: clamp(70px, 10vw, 160px); margin: 0 -2%; }
   .tejado {
     position: absolute; inset: 0;
@@ -124,7 +169,16 @@
     display: grid; place-items: center; font-size: clamp(1rem, 2vw, 1.7rem);
     background: radial-gradient(circle, #fff1b0, #ffb84d 70%); border: 4px solid #2a1818;
     box-shadow: 0 0 20px rgba(255, 184, 77, .7);
+    animation: vela-buhardilla 2.6s ease-in-out infinite;
   }
+  @keyframes vela-buhardilla { 0%, 100% { box-shadow: 0 0 20px rgba(255, 184, 77, .7); } 50% { box-shadow: 0 0 34px rgba(255, 184, 77, 1); } }
+  /* Araña colgando del tejado */
+  .arana {
+    position: absolute; left: 22%; top: 100%; z-index: 3; width: 2px; height: 20px;
+    background: rgba(230, 225, 255, .55); animation: colgar 7s ease-in-out infinite;
+  }
+  .arana span { position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 70%); font-size: clamp(1.4rem, 2.4vw, 2.2rem); line-height: 1; }
+  @keyframes colgar { 0%, 100% { height: 14px; } 40% { height: clamp(60px, 9vw, 130px); } 55% { height: clamp(50px, 8vw, 115px); } 70% { height: clamp(60px, 9vw, 130px); } }
   .fachada {
     position: relative; padding: clamp(14px, 2vw, 28px) clamp(12px, 2.4vw, 40px) clamp(16px, 2vw, 26px);
     background:
@@ -132,15 +186,28 @@
       repeating-linear-gradient(0deg, #2b1b47 0 40px, #201336 40px 43px);
     border: 8px solid #4a3470; border-top: 0; border-radius: 0 0 6px 6px;
   }
+  /* Telarañas en las esquinas de la fachada */
+  .telarana { position: absolute; top: 0; font-size: clamp(2rem, 4vw, 3.4rem); opacity: .55; line-height: 1; pointer-events: none; }
+  .telarana.izq { left: 0; }
+  .telarana.der { right: 0; transform: scaleX(-1); }
+  /* Fantasmas que se asoman por detrás de la casa */
+  .asomado { position: absolute; z-index: -1; bottom: 30%; font-size: clamp(2.4rem, 4.5vw, 4rem); line-height: 1; animation: asomar-izq 18s ease-in-out infinite; }
+  .asomado.izq { left: 0; }
+  .asomado.der { right: 0; animation-name: asomar-der; animation-delay: -9s; bottom: 55%; }
+  @keyframes asomar-izq { 0%, 40%, 60%, 100% { transform: translateX(0) rotate(0); } 46%, 54% { transform: translateX(-85%) rotate(-12deg); } }
+  @keyframes asomar-der { 0%, 40%, 60%, 100% { transform: translateX(0) rotate(0); } 46%, 54% { transform: translateX(85%) rotate(12deg); } }
   .suelo {
     position: relative; height: 30px; margin: 0 -3%; border-radius: 50% 50% 0 0 / 100% 100% 0 0;
     background: linear-gradient(180deg, #2f5a2a, #1b3418);
   }
   .suelo span { position: absolute; bottom: 10px; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1; }
-  .suelo span:nth-child(1) { left: 4%; }
+  .suelo span:nth-child(1) { left: 4%; animation: calabaza 2.2s ease-in-out infinite; }
   .suelo span:nth-child(2) { left: 11%; font-size: clamp(1.4rem, 2.4vw, 2rem); }
-  .suelo span:nth-child(3) { right: 4%; }
+  .suelo span:nth-child(3) { right: 4%; animation: calabaza 2.2s ease-in-out infinite -1.1s; }
+  .suelo span:nth-child(4) { right: 12%; font-size: clamp(1.3rem, 2.2vw, 1.9rem); }
+  @keyframes calabaza { 0%, 100% { filter: drop-shadow(0 0 4px #ff8a00); } 50% { filter: drop-shadow(0 0 16px #ff8a00); } }
 
+  /* ---------- Puerta ---------- */
   .escena { perspective: 1200px; display: grid; justify-items: center; }
   .letrero {
     margin: 0 0 14px; padding: 6px 26px; border-radius: 10px;
@@ -195,7 +262,7 @@
 
   .pista { margin: 16px 0 0; text-align: center; color: var(--texto-suave); font-size: 1.15rem; font-weight: 700; }
 
-  /* Ventanas de la casa (una por asignatura) */
+  /* ---------- Ventanas de la casa (una por asignatura) ---------- */
   .ventanas { display: grid; gap: 26px; justify-items: center; }
   .ventana {
     display: grid; justify-items: center; gap: 10px; width: 100%; max-width: 240px;
@@ -234,7 +301,24 @@
   .ventana:disabled .cristal .icono { animation: none; filter: none; }
   .ventana:disabled .alfeizar small { color: var(--texto); }
 
-  /* Pregunta a pantalla completa */
+  /* ---------- Animación de entrada a la casa ---------- */
+  #juego.entrando .barra { animation: bajar .6s ease-out both; }
+  #juego.entrando .suelo { animation: brotar .6s ease-out both; }
+  #juego.entrando .fachada { animation: subir-casa .9s cubic-bezier(.2, .9, .3, 1.1) .2s both; }
+  #juego.entrando .tejado-zona { animation: caer-tejado .7s cubic-bezier(.3, 1.5, .5, 1) .9s both; }
+  #juego.entrando .marco { animation: puerta-entra .8s ease-out .6s both, aura 3.2s ease-in-out infinite; }
+  #juego.entrando .letrero { animation: encender 1.2s linear 1.5s both; }
+  #juego.entrando .ventana { animation: pop .55s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: calc(1.3s + var(--i) * .18s); }
+  #juego.entrando .pista { animation: brotar .5s ease-out 2.2s both; }
+  @keyframes bajar { from { transform: translateY(-30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes brotar { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes subir-casa { from { transform: translateY(70px) scaleY(.85); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes caer-tejado { from { transform: translateY(-120%); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes puerta-entra { from { transform: scale(.6); filter: brightness(.2); } to { transform: none; filter: none; } }
+  @keyframes encender { 0% { opacity: 0; } 15% { opacity: 1; } 25% { opacity: .1; } 40% { opacity: 1; } 50% { opacity: .3; } 65%, 100% { opacity: 1; } }
+  @keyframes pop { from { transform: scale(0) rotate(-12deg); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* ---------- Pregunta a pantalla completa ---------- */
   .velo {
     position: fixed; inset: 0; z-index: 10; background: rgba(8, 4, 18, .9);
     display: grid; place-items: center; padding: 12px; overflow-y: auto;
@@ -247,7 +331,12 @@
     box-shadow: 0 0 80px color-mix(in srgb, var(--c) 35%, transparent), 0 30px 80px rgba(0, 0, 0, .6);
     animation: aparecer .35s cubic-bezier(.2, .9, .3, 1.2);
   }
+  .panel.temblar { animation: temblor-panel .5s; }
   @keyframes aparecer { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes temblor-panel {
+    0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-14px, 4px) rotate(-1deg); }
+    40% { transform: translate(12px, -4px) rotate(1deg); } 60% { transform: translate(-8px, 2px); } 80% { transform: translate(6px, -2px); }
+  }
   .cerrar {
     position: absolute; top: 12px; right: 12px; padding: 8px 14px; border-radius: 12px;
     background: transparent; border: 2px solid var(--piedra); font-weight: 700;
@@ -290,11 +379,49 @@
   .btn.principal { background: var(--vela); border-color: var(--vela); color: var(--tinta); }
   .btn.principal:hover { background: #ffc971; }
 
-  /* Final */
-  .final { text-align: center; }
-  .velo.final { background: rgba(8, 4, 18, .5); align-items: end; padding-bottom: 6vh; }
-  .final .panel { border-color: var(--vela); min-height: 0; --c: var(--vela); }
-  .final h2 { font-family: var(--titulo); font-style: italic; font-size: clamp(2rem, 7vw, 3.4rem); margin-bottom: 8px; }
+  /* Susto grande al fallar */
+  .susto-grande {
+    position: fixed; inset: 0; z-index: 20; pointer-events: none; display: grid; place-items: center;
+    font-size: min(45vw, 60vh); line-height: 1; opacity: 0;
+  }
+  .susto-grande.ver { animation: susto-grande 1s ease-out; }
+  @keyframes susto-grande { 0% { transform: scale(.2); opacity: 0; } 25% { transform: scale(1.05); opacity: .95; } 60% { opacity: .8; } 100% { transform: scale(1.5); opacity: 0; } }
+
+  /* Chispas al conseguir una llave */
+  .chispa { position: fixed; z-index: 15; pointer-events: none; font-size: clamp(1.2rem, 2.4vw, 2rem); line-height: 1; transform: translate(-50%, -50%); }
+
+  /* ---------- Escapada final ---------- */
+  .corredor { position: fixed; z-index: 12; pointer-events: none; font-size: clamp(2.6rem, 5vw, 4.4rem); line-height: 1; transform-origin: 50% 100%; }
+  .resplandor {
+    position: fixed; inset: 0; z-index: 25; pointer-events: none; opacity: 0;
+    background: radial-gradient(circle at 50% 50%, #fffef5 0%, #fff1b8 45%, #ffcf6e 100%);
+    transition: opacity 1.2s ease;
+  }
+  .resplandor.ver { opacity: 1; }
+  .velo.final {
+    z-index: 22; text-align: center; overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 120%, #ff9d3d 0%, rgba(255, 157, 61, 0) 55%),
+      linear-gradient(180deg, #0f0a2e 0%, #2b1a5a 55%, #5a2d6e 100%);
+  }
+  .estrellas { position: absolute; inset: 0; pointer-events: none; }
+  .estrellas i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #fff; animation: brillo 2.4s ease-in-out infinite; }
+  @keyframes brillo { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+  .confeti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .confeti span { position: absolute; top: -10%; font-size: clamp(1.4rem, 3vw, 2.6rem); line-height: 1; animation: caer linear infinite; }
+  @keyframes caer { from { transform: translateY(0) rotate(0); } to { transform: translateY(125vh) rotate(540deg); } }
+  .final .panel {
+    position: relative; z-index: 1; min-height: 0; width: min(100%, 900px);
+    border-color: var(--vela); --c: var(--vela); animation: escapado .8s cubic-bezier(.2, .9, .3, 1.3) both;
+  }
+  @keyframes escapado { from { transform: scale(.3) rotate(-6deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .final .grupo { font-size: clamp(2.6rem, 6vw, 4.4rem); line-height: 1; margin-bottom: 6px; }
+  .final .grupo span { display: inline-block; animation: saltar .6s ease-in-out infinite alternate; }
+  .final .grupo span:nth-child(2) { animation-delay: .15s; }
+  .final .grupo span:nth-child(3) { animation-delay: .3s; }
+  .final .grupo span:nth-child(4) { animation-delay: .45s; }
+  @keyframes saltar { from { transform: translateY(0); } to { transform: translateY(-16px); } }
+  .final h2 { font-family: var(--titulo); font-style: italic; font-size: clamp(2.2rem, 7vw, 4rem); margin: 0 0 10px; text-shadow: 0 0 24px rgba(255, 184, 77, .6); }
   .final p { margin: 0 0 8px; color: var(--texto-suave); font-size: clamp(1.15rem, 2.2vw, 1.6rem); }
 
   @media (prefers-reduced-motion: reduce) {
@@ -303,7 +430,12 @@
 </style>
 </head>
 <body>
-<div class="fondo" aria-hidden="true"><span>👻</span><span>🦇</span><span>🕸️</span><span>🦇</span></div>
+<div class="fondo" aria-hidden="true">
+  <div class="luna"></div>
+  <span class="flota">👻</span><span class="flota">🦇</span><span class="flota">🕸️</span><span class="flota">🦇</span>
+</div>
+<div class="cielo" id="cielo" aria-hidden="true"></div>
+<div class="niebla" aria-hidden="true"></div>
 
 <div class="app">
 
@@ -314,7 +446,9 @@
     <p>En cada ventana se esconde una asignatura. Si acertáis su pregunta, el fantasma os da una llave. Con todas las llaves, la puerta se abre y podéis volver a casa.</p>
     <label for="nombre">¿Cómo se llama la clase?</label>
     <input id="nombre" type="text" maxlength="24" autocomplete="off" placeholder="Por ejemplo: 3.º A">
-    <div><button class="boton-grande" id="entrar" type="button">Entrar en la casa</button></div>
+    <div><button class="boton-grande" id="entrar" type="button" disabled>Cargando preguntas…</button></div>
+    <div class="carga" id="carga" hidden></div>
+    <input type="file" id="archivo-preguntas" accept=".json,application/json" hidden>
   </section>
 
   <!-- SALA -->
@@ -331,28 +465,33 @@
       </div>
     </div>
 
-    <div class="casa">
-    <div class="tejado-zona" aria-hidden="true">
-      <div class="chimenea"><span class="humo">💨</span></div>
-      <div class="tejado"></div>
-      <div class="buhardilla">🦇</div>
-      <div class="tejado-borde"></div>
-    </div>
-    <div class="fachada">
-    <div class="sala">
-      <div class="ventanas" id="ventanas-izq"></div>
-      <div class="escena">
-        <p class="letrero">SALIDA</p>
-        <div class="marco" id="puerta" role="img" aria-label="Puerta cerrada con cerraduras">
-          <div class="luz"></div>
-          <div class="hoja"><div class="cerraduras" id="cerraduras"></div></div>
-        </div>
-        <p class="pista" id="pista">Pulsa una ventana para ver su pregunta.</p>
+    <div class="casa" id="casa">
+      <span class="asomado izq" aria-hidden="true">👻</span>
+      <span class="asomado der" aria-hidden="true">👻</span>
+      <div class="tejado-zona" aria-hidden="true">
+        <div class="chimenea"><span class="humo">💨</span></div>
+        <div class="tejado"></div>
+        <div class="buhardilla">🦇</div>
+        <div class="tejado-borde"></div>
+        <div class="arana"><span>🕷️</span></div>
       </div>
-      <div class="ventanas" id="ventanas-der"></div>
-    </div>
-    </div>
-    <div class="suelo" aria-hidden="true"><span>🎃</span><span>🪦</span><span>🎃</span></div>
+      <div class="fachada">
+        <span class="telarana izq" aria-hidden="true">🕸️</span>
+        <span class="telarana der" aria-hidden="true">🕸️</span>
+        <div class="sala">
+          <div class="ventanas" id="ventanas-izq"></div>
+          <div class="escena">
+            <p class="letrero">SALIDA</p>
+            <div class="marco" id="puerta" role="img" aria-label="Puerta cerrada con cerraduras">
+              <div class="luz"></div>
+              <div class="hoja"><div class="cerraduras" id="cerraduras"></div></div>
+            </div>
+            <p class="pista" id="pista">Pulsa una ventana para ver su pregunta.</p>
+          </div>
+          <div class="ventanas" id="ventanas-der"></div>
+        </div>
+      </div>
+      <div class="suelo" aria-hidden="true"><span>🎃</span><span>🪦</span><span>🎃</span><span>🪦</span></div>
     </div>
   </section>
 
@@ -370,10 +509,13 @@
   </div>
 </div>
 
-<!-- FINAL -->
+<!-- FINAL: fuera de la casa -->
 <div class="velo final" id="final" hidden>
+  <div class="estrellas" id="estrellas" aria-hidden="true"></div>
+  <div class="confeti" id="confeti" aria-hidden="true"></div>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="final-titulo">
-    <h2 id="final-titulo">¡La puerta se ha abierto!</h2>
+    <div class="grupo" aria-hidden="true"><span>🧒</span><span>👧</span><span>🧑</span><span>👦</span></div>
+    <h2 id="final-titulo">¡Habéis escapado!</h2>
     <p id="final-texto"></p>
     <p id="final-datos"></p>
     <div class="acciones" style="justify-content:center">
@@ -382,124 +524,25 @@
   </div>
 </div>
 
+<div class="susto-grande" id="susto" aria-hidden="true">👻</div>
+<div class="resplandor" id="resplandor" aria-hidden="true"></div>
+<div class="relampago" id="relampago" aria-hidden="true"></div>
+
 <script>
 /* ============================================================
-   BANCO DE PREGUNTAS · La Caja Embrujada (3.º de primaria)
-
-   Cómo editarlo:
-   - Cada pregunta es una lista de 5 textos entre corchetes:
-       ["Pregunta", "RESPUESTA CORRECTA", "falsa 1", "falsa 2", "falsa 3"]
-   - La respuesta correcta va SIEMPRE la primera (en el juego
-     las opciones se barajan solas, no aparecen en este orden).
-   - Para añadir una pregunta, copia una línea y cámbiala.
-   - Puedes tener las que quieras por categoría; cuantas más,
-     menos se repiten.
-   - Si añades o quitas una categoría entera, el número de llaves
-     necesarias se ajusta solo (una por categoría).
+   La Caja Embrujada
+   Las preguntas están en el archivo preguntas.json (junto a
+   este index.html). Ver README.md para editarlas.
    ============================================================ */
-
-window.CATEGORIAS = [
-  {
-    id: "mates",
-    nombre: "Matemáticas",
-    icono: "➕",
-    color: "#ffb84d",
-    preguntas: [
-      ["¿Cuánto es 6 × 7?", "42", "36", "48", "49"],
-      ["¿Cuánto es 9 × 5?", "45", "40", "54", "35"],
-      ["¿Cuánto es 56 ÷ 8?", "7", "6", "8", "9"],
-      ["¿Cuánto es 72 ÷ 9?", "8", "7", "9", "6"],
-      ["¿Cuánto es 345 + 278?", "623", "613", "523", "633"],
-      ["¿Cuánto es 500 − 237?", "263", "273", "337", "363"],
-      ["¿Cuántos centímetros hay en 1 metro?", "100", "10", "1.000", "50"],
-      ["¿Cuántos gramos hay en 1 kilogramo?", "1.000", "100", "10", "10.000"],
-      ["¿Cuál es la mitad de 36?", "18", "16", "12", "20"],
-      ["¿Cuántos lados tiene un hexágono?", "6", "5", "8", "4"],
-      ["Hay 3 bolsas con 8 caramelos cada una. ¿Cuántos caramelos hay en total?", "24", "11", "21", "32"],
-      ["¿Qué número tiene 4 centenas, 2 decenas y 5 unidades?", "425", "524", "452", "245"],
-      ["¿Cuántos minutos tiene una hora?", "60", "30", "100", "24"],
-      ["Una pizza está dividida en 4 trozos iguales y te comes 1. ¿Qué fracción de la pizza te has comido?", "1/4", "1/2", "4/1", "3/4"]
-    ]
-  },
-  {
-    id: "ingles",
-    nombre: "Inglés",
-    icono: "💬",
-    color: "#6ec6ff",
-    preguntas: [
-      ["How do you say “gato” in English?", "cat", "dog", "bird", "fish"],
-      ["What colour is the sun?", "yellow", "blue", "green", "purple"],
-      ["What is “red” in Spanish?", "rojo", "azul", "verde", "amarillo"],
-      ["¿Qué número es “twelve”?", "12", "2", "20", "10"],
-      ["What does “mother” mean in Spanish?", "madre", "padre", "hermana", "abuela"],
-      ["Complete: I ___ nine years old.", "am", "is", "are", "be"],
-      ["Which day comes after Monday?", "Tuesday", "Sunday", "Friday", "Wednesday"],
-      ["Which one is a fruit?", "apple", "chair", "pencil", "door"],
-      ["What does “nose” mean?", "nariz", "boca", "oreja", "ojo"],
-      ["“It’s raining” means…", "Está lloviendo", "Hace sol", "Está nevando", "Hace viento"],
-      ["What is the plural of “book”?", "books", "bookes", "bookis", "book"],
-      ["Choose the right answer: What’s your name?", "My name is Ana.", "I am nine.", "I like pizza.", "It is red."],
-      ["How many legs does a spider have?", "eight", "six", "four", "ten"],
-      ["Which animal can fly?", "bird", "fish", "cow", "snake"]
-    ]
-  },
-  {
-    id: "medio",
-    nombre: "Conocimiento del medio",
-    icono: "🌿",
-    color: "#7ddc92",
-    preguntas: [
-      ["¿Qué órgano bombea la sangre por todo el cuerpo?", "El corazón", "Los pulmones", "El estómago", "El cerebro"],
-      ["¿Cuántos sentidos tenemos las personas?", "5", "3", "4", "6"],
-      ["¿Cómo está el agua cuando es hielo?", "Sólida", "Líquida", "Gaseosa", "Ninguna de las anteriores"],
-      ["¿Cuál de estos animales es un mamífero?", "El delfín", "El tiburón", "El atún", "El pulpo"],
-      ["¿En qué contenedor se tira el papel y el cartón?", "Azul", "Amarillo", "Verde", "Rojo"],
-      ["¿Qué necesitan las plantas para vivir?", "Luz, agua y aire", "Solo oscuridad", "Solo hielo", "Solo piedras"],
-      ["¿Cuál es la isla más grande de Canarias?", "Tenerife", "Gran Canaria", "Lanzarote", "La Palma"],
-      ["¿Cómo se llama el volcán más alto de España?", "El Teide", "El Etna", "El Vesubio", "La Cumbre Vieja"],
-      ["¿Qué astro nos da luz y calor?", "El Sol", "La Luna", "Marte", "Una estrella fugaz"],
-      ["¿Cuál de estos animales es invertebrado?", "El caracol", "El gato", "La lagartija", "La gallina"],
-      ["¿Qué hueso protege el cerebro?", "El cráneo", "El fémur", "La costilla", "La columna"],
-      ["¿Cuál de estos alimentos es de origen vegetal?", "Las lentejas", "La leche", "El huevo", "El jamón"],
-      ["¿Cómo se llama el planeta en el que vivimos?", "Tierra", "Júpiter", "Marte", "Venus"],
-      ["¿Qué parte de la planta absorbe el agua del suelo?", "La raíz", "La hoja", "La flor", "El fruto"]
-    ]
-  },
-  {
-    id: "lengua",
-    nombre: "Lengua",
-    icono: "📖",
-    color: "#ff8fb8",
-    preguntas: [
-      ["¿Cuál es el antónimo (el contrario) de “alto”?", "bajo", "grande", "fuerte", "largo"],
-      ["¿Cuál es el contrario de “día”?", "noche", "tarde", "mañana", "hoy"],
-      ["¿Qué palabra significa lo mismo que “contento”?", "alegre", "triste", "enfadado", "cansado"],
-      ["¿Cuál es el plural de “lápiz”?", "lápices", "lápizes", "lápizs", "lápiz"],
-      ["¿Cuántas sílabas tiene “mariposa”?", "4", "3", "5", "2"],
-      ["¿Cuál de estas palabras es un sustantivo?", "gato", "correr", "bonito", "rápidamente"],
-      ["¿Cuál de estas palabras es un verbo?", "saltar", "mesa", "azul", "pequeño"],
-      ["En “La casa grande”, ¿cuál es el adjetivo?", "grande", "casa", "La", "casa grande"],
-      ["¿Con qué tipo de letra empieza una oración?", "Con mayúscula", "Con minúscula", "Con un número", "Con un punto"],
-      ["¿Cuál está bien escrita?", "hormiga", "ormiga", "hormigua", "ormigua"],
-      ["¿Cuál está bien escrita?", "canción", "cancion", "cáncion", "cancíon"],
-      ["Completa: Ayer Ana ___ al parque.", "fue", "va", "irá", "ir"],
-      ["¿Cuál es el femenino de “niño”?", "niña", "niños", "niñito", "niño"],
-      ["¿Qué frase tiene sentido?", "El perro ladra mucho.", "Mucho ladra perro el.", "Ladra el mucho perro.", "Perro mucho el ladra."],
-      ["¿Cuántas letras tiene el abecedario español?", "27", "26", "28", "25"]
-    ]
-  }
-];
-
-</script>
-<script>
 (function () {
   "use strict";
 
-  var CATS = window.CATEGORIAS || [];
-  var TOTAL = CATS.length;
+  var CATS = [];
+  var TOTAL = 0;
   var LETRAS = ["A", "B", "C", "D", "E", "F"];
+  var MOVIMIENTO = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  var estado = { nombre: "", llaves: {}, aciertos: 0, fallos: 0, colas: {}, cat: null, sonido: false };
+  var estado = { nombre: "", llaves: {}, aciertos: 0, fallos: 0, colas: {}, cat: null, sonido: false, escapando: false };
   var $ = function (s) { return document.querySelector(s); };
 
   function barajar(lista) {
@@ -513,14 +556,107 @@ window.CATEGORIAS = [
   function escapar(t) {
     return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
   }
+  function azar(min, max) { return min + Math.random() * (max - min); }
   function numLlaves() { return Object.keys(estado.llaves).length; }
 
-  /* ---------- Sonido (apagado por defecto) ---------- */
+  /* ---------- Carga de preguntas.json ---------- */
+  function texto(v) { return typeof v === "string" || typeof v === "number" ? String(v).trim() : ""; }
+
+  // Comprueba el JSON y lo pasa al formato interno: [pregunta, correcta, falsa1, falsa2, ...]
+  function prepararPreguntas(datos) {
+    var avisos = [], cats = [];
+    var lista = datos && Array.isArray(datos.categorias) ? datos.categorias : null;
+    if (!lista) return { cats: [], avisos: ["Falta la lista \"categorias\"."] };
+    lista.forEach(function (c, ci) {
+      var nombre = texto(c && c.nombre) || "Categoría " + (ci + 1);
+      var preguntas = [];
+      (Array.isArray(c && c.preguntas) ? c.preguntas : []).forEach(function (p, pi) {
+        var q = texto(p && p.pregunta), ok = texto(p && p.correcta);
+        var malas = (Array.isArray(p && p.incorrectas) ? p.incorrectas : []).map(texto).filter(Boolean);
+        if (!q || !ok || !malas.length) {
+          avisos.push(nombre + ", pregunta " + (pi + 1) + ": le falta la pregunta, la respuesta correcta o alguna incorrecta. Se ha saltado.");
+          return;
+        }
+        preguntas.push([q, ok].concat(malas.slice(0, LETRAS.length - 1)));
+      });
+      if (!preguntas.length) { avisos.push(nombre + ": no tiene ninguna pregunta válida. No aparecerá en el juego."); return; }
+      cats.push({
+        id: texto(c.id) || "cat" + ci,
+        nombre: nombre,
+        icono: texto(c.icono) || "❓",
+        color: /^#[0-9a-f]{3,8}$/i.test(texto(c.color)) ? texto(c.color) : "#ffb84d",
+        preguntas: preguntas
+      });
+    });
+    return { cats: cats, avisos: avisos };
+  }
+
+  function mostrarCarga(clase, html) {
+    var el = $("#carga");
+    el.className = "carga " + clase; el.innerHTML = html; el.hidden = false;
+    var b = el.querySelector("[data-elegir]");
+    if (b) b.addEventListener("click", function () { $("#archivo-preguntas").click(); });
+  }
+
+  function usarTexto(contenido) {
+    var datos;
+    try { datos = JSON.parse(contenido); }
+    catch (e) {
+      mostrarCarga("error", "<strong>El archivo preguntas.json tiene un error de escritura</strong> y no se puede leer:<br><code>" + escapar(e.message) +
+        "</code><br>Revisa comas, comillas y corchetes cerca de ese punto." +
+        '<br><button class="btn" type="button" data-elegir>Elegir otro preguntas.json</button>');
+      return;
+    }
+    var r = prepararPreguntas(datos);
+    if (!r.cats.length) {
+      mostrarCarga("error", "<strong>No hay preguntas válidas en preguntas.json.</strong><ul><li>" + r.avisos.map(escapar).join("</li><li>") + "</li></ul>");
+      return;
+    }
+    CATS = r.cats; TOTAL = CATS.length;
+    estado.colas = {};
+    $("#entrar").disabled = false;
+    $("#entrar").textContent = "Entrar en la casa";
+    if (r.avisos.length) mostrarCarga("aviso", "<strong>Algunas preguntas tienen fallos:</strong><ul><li>" + r.avisos.map(escapar).join("</li><li>") + "</li></ul>");
+    else $("#carga").hidden = true;
+  }
+
+  function cargarPreguntas() {
+    if (!window.fetch) { pedirArchivo(); return; }
+    fetch("preguntas.json", { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(usarTexto)
+      .catch(pedirArchivo);
+  }
+
+  // Si el juego se abre con doble clic (file://), el navegador no deja leer el JSON solo:
+  // se pide elegirlo a mano.
+  function pedirArchivo() {
+    $("#entrar").textContent = "Faltan las preguntas";
+    mostrarCarga("aviso", "No he podido leer <strong>preguntas.json</strong> automáticamente. " +
+      "Pasa cuando el juego se abre con doble clic desde el ordenador. Elige el archivo a mano " +
+      "(está en la misma carpeta que el juego) o abre la versión de internet." +
+      '<br><button class="btn principal" type="button" data-elegir>📂 Elegir preguntas.json</button>');
+  }
+  $("#archivo-preguntas").addEventListener("change", function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var lector = new FileReader();
+    lector.onload = function () { usarTexto(String(lector.result)); };
+    lector.readAsText(f, "utf-8");
+    this.value = "";
+  });
+
+  /* ---------- Efectos de sonido (apagados por defecto) ---------- */
   var ac = null;
+  function audio() {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    if (ac.state === "suspended") ac.resume();
+    return ac;
+  }
   function tonos(frecuencias, dur, tipo) {
     if (!estado.sonido) return;
     try {
-      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      audio();
       var t0 = ac.currentTime;
       frecuencias.forEach(function (f, i) {
         var o = ac.createOscillator(), g = ac.createGain();
@@ -532,6 +668,36 @@ window.CATEGORIAS = [
         o.start(t0 + i * dur); o.stop(t0 + (i + 1) * dur + 0.03);
       });
     } catch (e) { /* sin audio, no pasa nada */ }
+  }
+  function ruido(segundos) {
+    var len = Math.floor(ac.sampleRate * segundos), buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    var s = ac.createBufferSource(); s.buffer = buf; return s;
+  }
+  function trueno() {
+    if (!estado.sonido) return;
+    try {
+      audio();
+      var t = ac.currentTime + 0.25, s = ruido(2.5), f = ac.createBiquadFilter(), g = ac.createGain();
+      f.type = "lowpass"; f.frequency.value = 260;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.9, t + 0.08);
+      g.gain.exponentialRampToValueAtTime(0.3, t + 0.5);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 2.4);
+      s.connect(f); f.connect(g); g.connect(ac.destination); s.start(t);
+    } catch (e) { /* sin audio */ }
+  }
+  function crujido() {
+    if (!estado.sonido) return;
+    try {
+      audio();
+      var t = ac.currentTime, o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain();
+      o.type = "sawtooth";
+      o.frequency.setValueAtTime(140, t); o.frequency.linearRampToValueAtTime(70, t + 0.6); o.frequency.linearRampToValueAtTime(110, t + 1.3);
+      f.type = "bandpass"; f.frequency.value = 500; f.Q.value = 6;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + 0.1); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
+      o.connect(f); f.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 1.5);
+    } catch (e) { /* sin audio */ }
   }
 
   /* ---------- Música de fondo ----------
@@ -560,10 +726,9 @@ window.CATEGORIAS = [
     o.start(t); o.stop(t + dur + 0.02);
   }
   function chasquido(t) {
-    var len = Math.floor(ac.sampleRate * 0.04), buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
-    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
-    var s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
-    s.buffer = buf; f.type = "highpass"; f.frequency.value = 6000; g.gain.value = 0.25;
+    var s = ruido(0.04), f = ac.createBiquadFilter(), g = ac.createGain();
+    f.type = "highpass"; f.frequency.value = 6000;
+    g.gain.setValueAtTime(0.25, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
     s.connect(f); f.connect(g); g.connect(musica.salida); s.start(t);
   }
   function programar() {
@@ -581,8 +746,7 @@ window.CATEGORIAS = [
       var r = musica.audio.play();
       if (r && r.catch) r.catch(function () {});
     } else {
-      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
-      if (ac.state === "suspended") ac.resume();
+      audio();
       if (!musica.salida) { musica.salida = ac.createGain(); musica.salida.gain.value = 0.35; musica.salida.connect(ac.destination); }
       musica.paso = 0; musica.proxima = ac.currentTime + 0.05;
       programar();
@@ -601,33 +765,91 @@ window.CATEGORIAS = [
     b.setAttribute("aria-pressed", String(musica.sonando));
   }
 
+  /* ---------- Efectos de Halloween ---------- */
+  function relampago() {
+    var r = $("#relampago");
+    r.classList.remove("flash"); void r.offsetWidth; r.classList.add("flash");
+    trueno();
+  }
+  function enJuego() { return !$("#juego").hidden && $("#velo").hidden && !estado.escapando; }
+  // Relámpagos de vez en cuando
+  (function cicloRelampago() {
+    setTimeout(function () { if (enJuego()) relampago(); cicloRelampago(); }, azar(16000, 30000));
+  })();
+  // Murciélagos cruzando el cielo
+  function murcielago() {
+    var m = document.createElement("div");
+    m.className = "murcielago-vuelo" + (Math.random() < .5 ? " al-reves" : "");
+    m.style.top = azar(4, 45) + "vh";
+    m.style.animationDuration = azar(5, 9) + "s";
+    m.innerHTML = "<span>🦇</span>";
+    m.addEventListener("animationend", function (e) { if (e.target === m) m.remove(); });
+    $("#cielo").appendChild(m);
+  }
+  (function cicloMurcielagos() {
+    setTimeout(function () {
+      if (MOVIMIENTO && !$("#juego").hidden) { murcielago(); if (Math.random() < .4) setTimeout(murcielago, 400); }
+      cicloMurcielagos();
+    }, azar(6000, 13000));
+  })();
+  // Chispas que salen de un punto (al conseguir una llave)
+  function chispas(el) {
+    if (!MOVIMIENTO || !el || !el.animate) return;
+    var r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    var tipos = ["✨", "⭐", "🗝️", "✨"];
+    for (var i = 0; i < 14; i++) {
+      var s = document.createElement("span");
+      s.className = "chispa"; s.textContent = tipos[i % tipos.length];
+      s.style.left = x + "px"; s.style.top = y + "px";
+      document.body.appendChild(s);
+      var ang = (i / 14) * Math.PI * 2, dist = azar(70, 160);
+      s.animate([
+        { transform: "translate(-50%, -50%) scale(.3)", opacity: 1 },
+        { transform: "translate(calc(-50% + " + Math.cos(ang) * dist + "px), calc(-50% + " + Math.sin(ang) * dist + "px)) scale(1.1)", opacity: 0 }
+      ], { duration: 900, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" }).onfinish = (function (n) { return function () { n.remove(); }; })(s);
+    }
+  }
+  function sustoGrande() {
+    var s = $("#susto");
+    s.classList.remove("ver"); void s.offsetWidth; s.classList.add("ver");
+    var p = $("#panel");
+    p.classList.remove("temblar"); void p.offsetWidth; p.classList.add("temblar");
+  }
+
   /* ---------- Sala ---------- */
-  function ventana(c) {
+  function ventana(c, i) {
     var tiene = !!estado.llaves[c.id];
-    return '<button class="ventana" type="button" data-id="' + c.id + '" style="--c:' + c.color + '"' + (tiene ? " disabled" : "") + '>' +
-      '<span class="cristal"><span class="icono" aria-hidden="true">' + (tiene ? "🗝️" : c.icono) + '</span></span>' +
+    return '<button class="ventana" type="button" data-id="' + escapar(c.id) + '" style="--c:' + c.color + ';--i:' + i + '"' + (tiene ? " disabled" : "") + '>' +
+      '<span class="cristal"><span class="icono" aria-hidden="true">' + (tiene ? "🗝️" : escapar(c.icono)) + '</span></span>' +
       '<span class="alfeizar">' + escapar(c.nombre) + '<small>' + (tiene ? "Llave conseguida" : "Pulsa para abrir") + '</small></span></button>';
   }
 
   function pintarSala() {
     $("#cerraduras").innerHTML = CATS.map(function (c) {
       var abierta = !!estado.llaves[c.id];
-      return '<div class="cerradura' + (abierta ? " abierta" : "") + '" data-id="' + c.id + '" style="--c:' + c.color + '"' +
+      return '<div class="cerradura' + (abierta ? " abierta" : "") + '" data-id="' + escapar(c.id) + '" style="--c:' + c.color + '"' +
         ' title="' + escapar(c.nombre) + (abierta ? ": llave conseguida" : ": falta la llave") + '">' +
-        '<span class="icono" aria-hidden="true">' + c.icono + '</span>' +
+        '<span class="icono" aria-hidden="true">' + escapar(c.icono) + '</span>' +
         '<span class="candado" aria-hidden="true">' + (abierta ? "🗝️" : "🔒") + '</span></div>';
     }).join("");
 
     // Mitad de las ventanas a cada lado de la puerta
     var mitad = Math.ceil(TOTAL / 2);
-    $("#ventanas-izq").innerHTML = CATS.slice(0, mitad).map(ventana).join("");
-    $("#ventanas-der").innerHTML = CATS.slice(mitad).map(ventana).join("");
+    $("#ventanas-izq").innerHTML = CATS.slice(0, mitad).map(function (c, i) { return ventana(c, i); }).join("");
+    $("#ventanas-der").innerHTML = CATS.slice(mitad).map(function (c, i) { return ventana(c, mitad + i); }).join("");
 
     var n = numLlaves();
     $("#contador").textContent = "🗝️ " + n + " de " + TOTAL + " llaves";
     var resta = TOTAL - n;
     $("#pista").textContent = resta === 0 ? "¡Tenéis todas las llaves!" :
       (resta === 1 ? "Solo os falta 1 llave." : "Os faltan " + resta + " llaves. Pulsa una ventana.");
+  }
+
+  function animarEntrada() {
+    var j = $("#juego");
+    j.classList.remove("entrando"); void j.offsetWidth; j.classList.add("entrando");
+    setTimeout(relampago, 150);
+    setTimeout(function () { j.classList.remove("entrando"); }, 3200);
   }
 
   /* ---------- Preguntas ---------- */
@@ -648,9 +870,10 @@ window.CATEGORIAS = [
 
     var panel = $("#panel");
     panel.style.setProperty("--c", cat.color);
+    panel.classList.remove("temblar");
     // Reinicia la animación de entrada
     panel.style.animation = "none"; void panel.offsetWidth; panel.style.animation = "";
-    $("#cat").innerHTML = '<span class="icono" aria-hidden="true">' + cat.icono + '</span>' + escapar(cat.nombre);
+    $("#cat").innerHTML = '<span class="icono" aria-hidden="true">' + escapar(cat.icono) + '</span>' + escapar(cat.nombre);
     $("#pregunta").textContent = item[0];
     $("#resultado").innerHTML = "";
     $("#resultado").className = "";
@@ -662,9 +885,9 @@ window.CATEGORIAS = [
       b.type = "button"; b.className = "opcion";
       var letra = document.createElement("span");
       letra.className = "letra"; letra.setAttribute("aria-hidden", "true"); letra.textContent = LETRAS[i];
-      var texto = document.createElement("span");
-      texto.textContent = o.t;
-      b.appendChild(letra); b.appendChild(texto);
+      var txt = document.createElement("span");
+      txt.textContent = o.t;
+      b.appendChild(letra); b.appendChild(txt);
       b.addEventListener("click", function () { responder(b, o, opciones, correcta); });
       $("#opciones").appendChild(b);
     });
@@ -687,6 +910,7 @@ window.CATEGORIAS = [
       estado.aciertos++;
       estado.llaves[estado.cat.id] = true;
       tonos([523, 659, 784], 0.13);
+      chispas(boton);
       res.className = "resultado bien";
       res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto! Habéis conseguido la llave de ' + escapar(estado.cat.nombre) + '.';
       acc.innerHTML = '<button class="btn principal" type="button" id="coger">Coger la llave</button>';
@@ -696,6 +920,7 @@ window.CATEGORIAS = [
       boton.classList.add("mal");
       estado.fallos++;
       tonos([233, 165], 0.22, "sawtooth");
+      sustoGrande();
       res.className = "resultado mal";
       res.innerHTML = '<span class="fantasma" aria-hidden="true">👻</span> ¡Uuuuh! Esa no era. La respuesta correcta era: <em>' + escapar(correcta) + '</em>';
       acc.innerHTML =
@@ -713,55 +938,117 @@ window.CATEGORIAS = [
     document.body.style.overflow = "";
     pintarSala();
     if (conseguida && id) {
-      var el = document.querySelector('.cerradura[data-id="' + id + '"]');
+      var sel = '[data-id="' + id.replace(/["\\]/g, "\\$&") + '"]';
+      var el = document.querySelector(".cerradura" + sel);
       if (el) el.classList.add("recien");
-      if (numLlaves() === TOTAL) {
-        $("#puerta").scrollIntoView({ behavior: "smooth", block: "center" });
-        setTimeout(abrirPuerta, 900);
-        return;
-      }
+      chispas(document.querySelector(".ventana" + sel));
+      if (numLlaves() === TOTAL) { escaparDeLaCasa(); return; }
     }
     var siguienteVentana = document.querySelector(".ventana:not(:disabled)");
     if (siguienteVentana) siguienteVentana.focus();
   }
 
-  /* ---------- Final ---------- */
-  function abrirPuerta() {
-    $("#puerta").classList.add("abierta");
-    $("#puerta").setAttribute("aria-label", "Puerta abierta");
-    tonos([523, 659, 784, 1047, 1319], 0.16);
+  /* ---------- Final: la clase atraviesa la puerta ---------- */
+  function centroPuerta() {
+    var r = $("#puerta").getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height * 0.6 };
+  }
+
+  function correrHaciaPuerta() {
+    if (!MOVIMIENTO || !document.body.animate) return;
+    var c = centroPuerta();
+    var ninos = ["🧒", "👧", "🧑", "👦", "👧", "🧒", "👦", "🧑"];
+    ninos.forEach(function (n, i) {
+      var s = document.createElement("span");
+      s.className = "corredor"; s.textContent = n;
+      var x0 = azar(5, 95) / 100 * innerWidth, y0 = innerHeight + 20;
+      s.style.left = x0 + "px"; s.style.top = y0 + "px";
+      document.body.appendChild(s);
+      var dx = c.x - x0, dy = c.y - y0;
+      s.animate([
+        { transform: "translate(-50%, -100%) scale(1.3)", opacity: 1 },
+        { transform: "translate(calc(-50% + " + dx * .5 + "px), calc(-100% + " + (dy * .5 - 40) + "px)) scale(.8)", opacity: 1, offset: .5 },
+        { transform: "translate(calc(-50% + " + dx + "px), calc(-100% + " + dy + "px)) scale(.12)", opacity: 0 }
+      ], { duration: azar(1200, 1600), delay: i * 110, easing: "ease-in", fill: "forwards" });
+    });
+  }
+
+  function atravesarPuerta() {
+    var casa = $("#casa"), c = centroPuerta(), r = casa.getBoundingClientRect();
+    casa.style.transformOrigin = (c.x - r.left) + "px " + (c.y - r.top) + "px";
+    casa.classList.add("atravesar");
+    setTimeout(function () { $("#resplandor").classList.add("ver"); }, 500);
+  }
+
+  function lluviaDeCaramelos() {
+    var cosas = ["🍬", "🍭", "🎃", "🦇", "👻", "🍫", "⭐", "🕸️"], html = "";
+    for (var i = 0; i < 40; i++) {
+      html += '<span style="left:' + azar(0, 98).toFixed(1) + "%;animation-duration:" + azar(4, 9).toFixed(1) +
+        "s;animation-delay:-" + azar(0, 9).toFixed(1) + 's">' + cosas[i % cosas.length] + "</span>";
+    }
+    $("#confeti").innerHTML = MOVIMIENTO ? html : "";
+    var est = "";
+    for (var k = 0; k < 60; k++) {
+      est += '<i style="left:' + azar(0, 100).toFixed(1) + "%;top:" + azar(0, 70).toFixed(1) + "%;animation-delay:-" + azar(0, 2.4).toFixed(1) + 's"></i>';
+    }
+    $("#estrellas").innerHTML = est;
+  }
+
+  function escaparDeLaCasa() {
+    estado.escapando = true;
+    document.body.style.overflow = "hidden";
+    $("#puerta").scrollIntoView({ behavior: MOVIMIENTO ? "smooth" : "auto", block: "center" });
     setTimeout(function () {
-      var quien = estado.nombre ? ", " + estado.nombre : "";
-      $("#final-texto").textContent = "¡Lo habéis conseguido" + quien + "! Habéis escapado de la casa embrujada y ya podéis volver a casa.";
-      $("#final-datos").textContent = "Respuestas acertadas: " + estado.aciertos + ". Sustos de fantasma: " + estado.fallos + ".";
-      $("#final").hidden = false;
-      document.body.style.overflow = "hidden";
-      $("#otra").focus();
-    }, 2300);
+      crujido();
+      $("#puerta").classList.add("abierta");
+      $("#puerta").setAttribute("aria-label", "Puerta abierta");
+    }, 700);
+    setTimeout(function () { tonos([523, 659, 784, 1047, 1319], 0.16); }, 1500);
+    setTimeout(correrHaciaPuerta, 2600);
+    setTimeout(atravesarPuerta, MOVIMIENTO ? 4100 : 2600);
+    setTimeout(mostrarFinal, MOVIMIENTO ? 5800 : 3200);
+  }
+
+  function mostrarFinal() {
+    var quien = estado.nombre ? ", " + estado.nombre : "";
+    $("#final-texto").textContent = "¡Lo habéis conseguido" + quien + "! Habéis atravesado la puerta y ya estáis fuera de la casa embrujada.";
+    $("#final-datos").textContent = "Respuestas acertadas: " + estado.aciertos + ". Sustos de fantasma: " + estado.fallos + ".";
+    lluviaDeCaramelos();
+    $("#final").hidden = false;
+    $("#resplandor").classList.remove("ver");
+    Array.prototype.forEach.call(document.querySelectorAll(".corredor"), function (n) { n.remove(); });
+    tonos([784, 988, 1175, 1568], 0.14);
+    $("#otra").focus();
   }
 
   function reiniciar() {
-    estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0; estado.colas = {}; estado.cat = null;
+    estado.llaves = {}; estado.aciertos = 0; estado.fallos = 0; estado.colas = {}; estado.cat = null; estado.escapando = false;
     $("#final").hidden = true;
+    $("#confeti").innerHTML = "";
     document.body.style.overflow = "";
+    var casa = $("#casa");
+    casa.classList.remove("atravesar"); casa.style.transformOrigin = "";
     $("#puerta").classList.remove("abierta");
     $("#puerta").setAttribute("aria-label", "Puerta cerrada con cerraduras");
     pintarSala();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo(0, 0);
+    animarEntrada();
   }
 
   /* ---------- Eventos ---------- */
   function empezar() {
+    if (!TOTAL) return;
     estado.nombre = $("#nombre").value.trim();
     $("#inicio").hidden = true;
     $("#juego").hidden = false;
     pintarSala();
+    animarEntrada();
     var v = document.querySelector(".ventana");
-    if (v) v.focus();
+    if (v) v.focus({ preventScroll: true });
   }
   function alPulsarVentana(e) {
     var b = e.target.closest(".ventana");
-    if (b && !b.disabled) abrirPregunta(b.getAttribute("data-id"));
+    if (b && !b.disabled && !estado.escapando) abrirPregunta(b.getAttribute("data-id"));
   }
   $("#entrar").addEventListener("click", empezar);
   $("#nombre").addEventListener("keydown", function (e) { if (e.key === "Enter") empezar(); });
@@ -812,6 +1099,8 @@ window.CATEGORIAS = [
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && !$("#velo").hidden) cerrarPregunta(!!(estado.cat && estado.llaves[estado.cat.id] && $("#coger")));
   });
+
+  cargarPreguntas();
 })();
 </script>
 </body>
