@@ -1,6 +1,6 @@
 # La Caja Embrujada
 
-Juego de preguntas para jugar toda la clase en la pizarra digital o el proyector (3.º de primaria). La clase está atrapada en una casa embrujada: en cada ventana hay una asignatura (Matemáticas, Inglés, Conocimiento del medio y Lengua). Al pulsar una ventana se abre su pregunta en grande; cada acierto es una llave. Con 5 llaves de una asignatura se abre su cerradura, y con todas las cerraduras abiertas (15 llaves) se abre la puerta y la clase escapa.
+Juego de preguntas para jugar toda la clase en la pizarra digital o el proyector (3.º de primaria). La clase está atrapada en una casa embrujada: en cada ventana hay una asignatura (Matemáticas, Conocimiento del medio y Lengua; Inglés está desactivado de momento). Al pulsar una ventana se abre su pregunta en grande; cada acierto es una llave. Con 5 llaves de una asignatura se abre su cerradura, y con todas las cerraduras abiertas (15 llaves) se abre la puerta y la clase escapa.
 
 ## Cómo jugar
 
@@ -19,7 +19,7 @@ Todas las preguntas están en **`preguntas.json`**. Cada pregunta ocupa una lín
 - `correcta` es la respuesta buena; `incorrectas` son las falsas (de 1 a 5). El juego baraja las opciones.
 - Para añadir una pregunta, copia una línea y cámbiala. Todas las líneas llevan una coma al final **menos la última** de cada lista.
 - Usa siempre comillas dobles `"`. Si necesitas comillas dentro del texto, usa las tipográficas (“ ”).
-- Cada categoría tiene `nombre`, `icono` (un emoji), `color` (por ejemplo `"#ffb84d"`) y su lista de `preguntas`. Puedes añadir o quitar categorías: habrá una ventana y una llave por cada una.
+- Cada categoría tiene `nombre`, `icono` (un emoji), `color` (por ejemplo `"#ffb84d"`) y su lista de `preguntas`. Puedes añadir o quitar categorías: habrá una ventana y una cerradura por cada una.
 - `"llavesPorAsignatura"` (al principio del archivo) dice cuántos aciertos hacen falta en cada asignatura para abrir su cerradura. Ahora es 5.
 - Para quitar una asignatura sin borrar sus preguntas, pon `"activa": false`. Para que vuelva a salir, cámbialo a `"activa": true`. (Ahora mismo Inglés está desactivado.)
 
