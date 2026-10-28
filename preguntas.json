@@ -2,6 +2,7 @@
   "categorias": [
     {
       "id": "mates",
+      "activa": true,
       "nombre": "Matemáticas",
       "icono": "➕",
       "color": "#ffb84d",
@@ -37,6 +38,7 @@
     },
     {
       "id": "ingles",
+      "activa": false,
       "nombre": "Inglés",
       "icono": "💬",
       "color": "#6ec6ff",
@@ -59,6 +61,7 @@
     },
     {
       "id": "medio",
+      "activa": true,
       "nombre": "Conocimiento del medio",
       "icono": "🌿",
       "color": "#7ddc92",
@@ -96,6 +99,7 @@
     },
     {
       "id": "lengua",
+      "activa": true,
       "nombre": "Lengua",
       "icono": "📖",
       "color": "#ff8fb8",

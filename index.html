@@ -253,6 +253,8 @@
     font-size: clamp(1.4rem, 3vw, 2.4rem);
     transition: box-shadow .5s, border-color .5s;
   }
+  /* Si hay un número impar de cerraduras, la última va centrada */
+  .cerradura:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 9px); }
   .cerradura .icono { filter: grayscale(1) brightness(.7); transition: filter .5s; }
   .cerradura .candado { position: absolute; right: -8px; bottom: -8px; font-size: .62em; }
   .cerradura.abierta { border-color: var(--c); box-shadow: 0 0 22px var(--c), inset 0 0 14px color-mix(in srgb, var(--c) 40%, transparent); }
@@ -577,6 +579,7 @@
     var lista = datos && Array.isArray(datos.categorias) ? datos.categorias : null;
     if (!lista) return { cats: [], avisos: ["Falta la lista \"categorias\"."] };
     lista.forEach(function (c, ci) {
+      if (c && c.activa === false) return; // asignatura desactivada en preguntas.json
       var nombre = texto(c && c.nombre) || "Categoría " + (ci + 1);
       var preguntas = [];
       (Array.isArray(c && c.preguntas) ? c.preguntas : []).forEach(function (p, pi) {

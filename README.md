@@ -20,6 +20,7 @@ Todas las preguntas están en **`preguntas.json`**. Cada pregunta ocupa una lín
 - Para añadir una pregunta, copia una línea y cámbiala. Todas las líneas llevan una coma al final **menos la última** de cada lista.
 - Usa siempre comillas dobles `"`. Si necesitas comillas dentro del texto, usa las tipográficas (“ ”).
 - Cada categoría tiene `nombre`, `icono` (un emoji), `color` (por ejemplo `"#ffb84d"`) y su lista de `preguntas`. Puedes añadir o quitar categorías: habrá una ventana y una llave por cada una.
+- Para quitar una asignatura sin borrar sus preguntas, pon `"activa": false`. Para que vuelva a salir, cámbialo a `"activa": true`. (Ahora mismo Inglés está desactivado.)
 
 Si el archivo tiene un error (una coma o una comilla de más o de menos), el juego lo avisa en la pantalla de inicio y dice dónde está. También puedes comprobarlo pegándolo en https://jsonlint.com.
 
