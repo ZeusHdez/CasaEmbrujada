@@ -26,20 +26,20 @@
         { "pregunta": "En el número 382, ¿cuánto vale la cifra 3?", "correcta": "300", "incorrectas": ["3", "30", "380"] },
         { "pregunta": "¿Cuántas centenas tiene el número 900?", "correcta": "9", "incorrectas": ["90", "900", "0"] },
         { "pregunta": "Lucía tiene 125 cromos y su hermano le regala 48. ¿Cuántos cromos tiene ahora?", "correcta": "173", "incorrectas": ["163", "77", "183"] },
-        { "pregunta": "En el autobús van 52 niños. En una parada se bajan 17. ¿Cuántos niños quedan?", "correcta": "35", "incorrectas": ["45", "69", "25"] },
+        { "pregunta": "En la guagua van 52 niños. En una parada se bajan 17. ¿Cuántos niños quedan?", "correcta": "35", "incorrectas": ["45", "69", "25"] },
         { "pregunta": "Una caja tiene 6 filas de 5 galletas. ¿Cuántas galletas hay?", "correcta": "30", "incorrectas": ["11", "25", "35"] },
         { "pregunta": "Mamá compra 3 paquetes de 4 yogures. ¿Cuántos yogures compra?", "correcta": "12", "incorrectas": ["7", "34", "16"] },
         { "pregunta": "Repartimos 20 caramelos entre 4 amigos a partes iguales. ¿Cuántos le tocan a cada uno?", "correcta": "5", "incorrectas": ["4", "16", "24"] },
         { "pregunta": "Un libro tiene 200 páginas. Pablo ha leído 85. ¿Cuántas le faltan?", "correcta": "115", "incorrectas": ["125", "285", "105"] },
         { "pregunta": "En el patio hay 3 bancos y en cada uno se sientan 6 niños. ¿Cuántos niños hay sentados?", "correcta": "18", "incorrectas": ["9", "36", "15"] },
-        { "pregunta": "Ana tenía 10 € y se gasta 3 € en un bocadillo y 2 € en un zumo. ¿Cuánto dinero le queda?", "correcta": "5 €", "incorrectas": ["7 €", "8 €", "15 €"] },
+        { "pregunta": "Ana tenía 10 € y se gasta 3 € en un bocadillo y 2 € en un jugo. ¿Cuánto dinero le queda?", "correcta": "5 €", "incorrectas": ["7 €", "8 €", "15 €"] },
         { "pregunta": "En una granja hay 8 vacas. ¿Cuántas patas tienen en total?", "correcta": "32", "incorrectas": ["12", "16", "24"] },
         { "pregunta": "En clase somos 25 alumnos y hoy han faltado 3. ¿Cuántos hemos venido?", "correcta": "22", "incorrectas": ["28", "23", "21"] },
         { "pregunta": "¿Cuánto es 1C + 9D + 3U?", "correcta": "193", "incorrectas": ["913", "139", "103"] },
         { "pregunta": "¿Cuántas decenas son 70 unidades?", "correcta": "7", "incorrectas": ["70", "700", "17"] },
         { "pregunta": "¿Cuánto es 2C + 25D?", "correcta": "450", "incorrectas": ["225", "252", "475"] },
         { "pregunta": "En la biblioteca hay 3 estanterías con 100 libros cada una. ¿Cuántos libros hay?", "correcta": "300", "incorrectas": ["103", "30", "400"] },
-        { "pregunta": "Carlos tenía 64 canicas y perdió 28. ¿Cuántas le quedan?", "correcta": "36", "incorrectas": ["46", "92", "34"] }
+        { "pregunta": "Carlos tenía 64 boliches y perdió 28. ¿Cuántas le quedan?", "correcta": "36", "incorrectas": ["46", "92", "34"] }
       ]
     },
     {

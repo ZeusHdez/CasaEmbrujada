@@ -467,8 +467,8 @@
   <!-- INICIO -->
   <section class="inicio" id="inicio">
     <h1>La Caja Embrujada</h1>
-    <p>¡Cuidado! La puerta se ha cerrado y estáis atrapados en la casa embrujada.</p>
-    <p>En cada ventana se esconde una asignatura. Cada pregunta que acertéis es una llave. Con todas las llaves de una asignatura se abre su cerradura, y con todas las cerraduras abiertas, la puerta se abre y podéis volver a casa.</p>
+    <p>¡Cuidado! La puerta se ha cerrado y están atrapados en la casa embrujada.</p>
+    <p>En cada ventana se esconde una asignatura. Cada pregunta que acierten es una llave. Con todas las llaves de una asignatura se abre su cerradura, y con todas las cerraduras abiertas, la puerta se abre y pueden volver a casa.</p>
     <label for="nombre">¿Cómo se llama la clase?</label>
     <input id="nombre" type="text" maxlength="24" autocomplete="off" placeholder="Por ejemplo: 3.º A">
     <div class="guardada" id="guardada" hidden>
@@ -545,7 +545,7 @@
   <div class="confeti" id="confeti" aria-hidden="true"></div>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="final-titulo">
     <div class="grupo" aria-hidden="true"><span>🧒</span><span>👧</span><span>🧑</span><span>👦</span></div>
-    <h2 id="final-titulo">¡Habéis escapado!</h2>
+    <h2 id="final-titulo">¡Lograron escapar!</h2>
     <p id="final-texto"></p>
     <p id="final-datos"></p>
     <div class="acciones" style="justify-content:center">
@@ -935,8 +935,8 @@
     var n = numLlaves();
     $("#contador").textContent = "🗝️ " + n + " de " + totalLlaves() + " llaves";
     var resta = totalLlaves() - n;
-    $("#pista").textContent = resta === 0 ? "¡Tenéis todas las llaves!" :
-      (resta === 1 ? "Solo os falta 1 llave." : "Os faltan " + resta + " llaves. Pulsa una ventana.");
+    $("#pista").textContent = resta === 0 ? "¡Ya tienen todas las llaves!" :
+      (resta === 1 ? "Solo les falta 1 llave." : "Les faltan " + resta + " llaves. Pulsa una ventana.");
   }
 
   function animarEntrada() {
@@ -1046,12 +1046,12 @@
       pintarCabeceraPregunta();
       res.className = "resultado bien";
       if (n >= LLAVES) {
-        res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto! Ya tenéis las ' + LLAVES + ' llaves de ' + escapar(cat.nombre) + '. ¡Su cerradura se abre!';
+        res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto, mis niños! Ya tienen las ' + LLAVES + ' llaves de ' + escapar(cat.nombre) + '. ¡Su cerradura se abre!';
         acc.innerHTML = '<button class="btn principal" type="button" id="coger">Coger las llaves</button>';
         $("#coger").addEventListener("click", cerrarPregunta);
         $("#coger").focus();
       } else {
-        res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto! Llave ' + n + ' de ' + LLAVES + ' de ' + escapar(cat.nombre) + '.';
+        res.innerHTML = '<span class="fantasma" aria-hidden="true">🗝️</span> ¡Correcto, mis niños! Llave ' + n + ' de ' + LLAVES + ' de ' + escapar(cat.nombre) + '.';
         acc.innerHTML =
           '<button class="btn principal" type="button" id="seguir">Siguiente pregunta de ' + escapar(cat.nombre) + '</button>' +
           '<button class="btn" type="button" id="volver">Volver a la casa</button>';
@@ -1066,7 +1066,7 @@
       tonos([233, 165], 0.22, "sawtooth");
       sustoGrande();
       res.className = "resultado mal";
-      res.innerHTML = '<span class="fantasma" aria-hidden="true">👻</span> ¡Uuuuh! Esa no era. La respuesta correcta era: <em>' + escapar(correcta) + '</em>';
+      res.innerHTML = '<span class="fantasma" aria-hidden="true">👻</span> ¡Uuuuh! ¡Ños, esa no era! La respuesta correcta era: <em>' + escapar(correcta) + '</em>';
       acc.innerHTML =
         '<button class="btn principal" type="button" id="otra-preg">Probar con otra pregunta</button>' +
         '<button class="btn" type="button" id="volver">Volver a la casa</button>';
@@ -1157,7 +1157,7 @@
 
   function mostrarFinal() {
     var quien = estado.nombre ? ", " + estado.nombre : "";
-    $("#final-texto").textContent = "¡Lo habéis conseguido" + quien + "! Habéis atravesado la puerta y ya estáis fuera de la casa embrujada.";
+    $("#final-texto").textContent = "¡Chacho, lo consiguieron" + quien + "! Atravesaron la puerta y ya están fuera de la casa embrujada.";
     $("#final-datos").textContent = "Respuestas acertadas: " + estado.aciertos + ". Sustos de fantasma: " + estado.fallos + ".";
     lluviaDeCaramelos();
     $("#final").hidden = false;
