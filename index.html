@@ -317,9 +317,12 @@
   .pips { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 5px; }
   .pip { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--c); }
   .pip.llena { background: var(--c); box-shadow: 0 0 6px var(--c); }
+  .pips.muchas { gap: 3px; }
+  .pips.muchas .pip { width: 9px; height: 9px; border-width: 1.5px; }
+  @media (max-width: 899px) { .alfeizar .pips.muchas { display: grid; grid-template-columns: repeat(6, auto); justify-content: center; } }
   .cat-llaves { display: inline-flex; align-items: center; gap: 10px; margin-left: 18px; color: var(--texto); font-size: .8em; }
   .cat-llaves .pips { margin: 0; }
-  .cat-llaves .pip { width: 16px; height: 16px; }
+  .cat-llaves .pip, .cat-llaves .pips.muchas .pip { width: 16px; height: 16px; border-width: 2px; }
   .ventana:hover:not(:disabled) .cristal { transform: translateY(-5px) scale(1.04); box-shadow: inset 0 0 30px rgba(0, 0, 0, .5), 0 0 36px var(--c); }
   .ventana:disabled { cursor: default; }
   .ventana:disabled .cristal { background: radial-gradient(circle at 50% 55%, #fff6c9 0%, color-mix(in srgb, var(--c) 70%, #ffd97a) 70%); }
@@ -605,7 +608,7 @@
   function pips(n) {
     var h = "";
     for (var i = 0; i < LLAVES; i++) h += '<span class="pip' + (i < n ? " llena" : "") + '"></span>';
-    return '<span class="pips" aria-hidden="true">' + h + "</span>";
+    return '<span class="pips' + (LLAVES > 8 ? " muchas" : "") + '" aria-hidden="true">' + h + "</span>";
   }
 
   /* ---------- Carga de preguntas.json ---------- */
